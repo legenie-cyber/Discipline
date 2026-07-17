@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal WorkFlow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h3>Personal Workflow</h3>
+                <span class="subtitle">Organisation de vos activités groupées en catégories</span>
+            </div>
+            <nav class="theme-switcher">
+                <button type="button" data-theme="day">Jour</button>
+                <button type="button" data-theme="night">Nuit</button>
+                <button type="button" data-theme="nature">Nature</button>
+            </nav>
+        </header>
+        <main>
+            <section class="card">
+                <h2>Catégories</h2>
+                <div class="seances">
+                <!-- <article>
+                    <h3>PROJETS</h3>
+                    <ul>
+                        <li>
+                            <p>PWA</p>
+                            <progress width="10"></progress>
+                        </li>
+                        <li>spline</li>
+                        <li>Divers</li>
+                    </ul>
+                </article> -->
+                <article data-name="etude">
+                    <h3>ETUDES</h3>
+                    <ul>
+                        <li>Maths</li>
+                        <li>Programmation C</li>
+                        <li>Programmation Java</li>
+                    </ul>
+
+                </article>
+                <article data-name="menage">
+                    <h3>Menage</h3>
+                     <ul>
+                        <li>Lessive</li>
+                        <li>vessel</li>
+                        <li>Divers</li>
+                    </ul>
+                </article>
+                <article data-name="lecture">
+                    <h3>Lecture</h3>
+                     <ul>
+                        <li>Nos astres opposés</li>
+                        <li>Bible</li>
+                        <li></li>
+                    </ul>
+                </article>
+                <article data-name="scan">
+                    <h3>SCAN</h3>
+                     <ul>
+                        <li>SOLO LEVELING</li>
+                        <li>THE BEGINING </li>
+                        <li></li>
+                    </ul>
+                </article>
+                
+            </div>
+            <div class="actions">
+                <button class="plus">+</button>
+                <button class="projet">PROJETS</button>
+            </div>
+        </section>
+    </div>
+    
+    <script type="module">
+        import { StorageDB } from '../models/data.js';
+
+        const db = new StorageDB('categories', { persist: true, delay: 10 });
+        const plusBtn = document.querySelector('.plus');
+        const seances = document.querySelector('.seances');
+        const themeButtons = document.querySelectorAll('[data-theme]');
+
+        const applyTheme = name => {
+            document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
+            document.body.classList.add(`theme-${name}`);
+            localStorage.setItem('appTheme', name);
+            themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
+        };
+
+        const initTheme = () => {
+            const savedTheme = localStorage.getItem('appTheme') || 'day';
+            applyTheme(savedTheme);
+            themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
+        };
+
+        const createArticleFromRecord = rec => {
+            const article = document.createElement('article');
+            article.dataset.name = (rec.name || rec.nom || rec._id || 'categorie').toString();
+
+            const h3 = document.createElement('h3');
+            h3.textContent = (rec.name || rec.nom || (`Catégorie ${article.dataset.name}`)).toString().toUpperCase();
+
+            const ul = document.createElement('ul');
+            const items = [...(rec.subCategories || rec.elements || rec.items || [])];
+            if (!items.length && Array.isArray(rec.children)) items.push(...rec.children);
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                ul.appendChild(li);
+            });
+
+            article.append(h3, ul);
+            return article;
+        };
+
+        const attachArticleHandlers = () => {
+            seances.querySelectorAll('article').forEach(article => {
+                article.addEventListener('click', () => {
+                    const elements = [...article.querySelectorAll('li')]
+                        .map(li => li.textContent.trim())
+                        .filter(Boolean);
+
+                    localStorage.setItem('currentCategorie', JSON.stringify({
+                        nom: article.dataset.name,
+                        elements,
+                    }));
+
+                    location.href = './category.html';
+                });
+            });
+        };
+
+        const renderCategories = async () => {
+            const records = await db.all();
+            if (records?.length) {
+                seances.innerHTML = '';
+                records.forEach(rec => seances.appendChild(createArticleFromRecord(rec)));
+            }
+            attachArticleHandlers();
+        };
+
+        plusBtn.addEventListener('click', () => {
+            location.href = './plusAction.html';
+        });
+
+        initTheme();
+        renderCategories();
+    </script>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title></title>
+</head>
+<body>
+    <div id="wrapper">
+
+    </div>
+    
+
+    <template id="timer-layout">
+        <div class="titles">
+            <h2 class="categorie-title"></h2> <li></li> <h4 class="task-title"></h4>
+        </div>
+        <div >
+            <h1 class="timeLayout">00h00m00s</h1>
+        </div>
+        <div class="firstButtons">
+            <button class="play" >Play</button>
+            <button class="pause" >Pause</button>
+            <button class="stop" >Stop</button>
+            <button class="termine" >Termine</button>
+        </div>
+
+    </template>
+
+    <template id="todolist-layout">
+        
+        <form action="">
+            <h3>Decrire une liste de tache precise</h3>
+            <input type="text" placeholder="Entrer un titre" name="title" required >
+            <button type="submit">Ajouter</button>
+        </form>
+        
+        <main>
+            <div id="buttons">
+                <button class="all active" >Toutes</button>
+                <button class="todo">A faire</button>
+                <button class="done">Faites</button>
+            </div>
+            <div class="list-group"></div>
+            
+        </main>
+    </template>
+    <template id="todolist-item">
+        <label for="check-task">
+            <input type="checkbox" class="check-task" name="check-task">
+            <span class="nom-Tache"></span>
+            <button class="delete">X</button>
+        </label>
+    </template>
+    <template id="msg-error">
+        <p class="msg-error">erreur serveur</p>
+    </template>
+
+    
+    
+    
+    <script src="../models/flow.js" type="module"></script>
+    <script type="module">
+        let title = document.querySelector("title")
+        title.innerText = JSON.parse(localStorage.getItem("currentCategorie")).nom
+    
+    </script>
+</body>
+</html>

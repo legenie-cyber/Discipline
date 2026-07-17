@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catégorie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h3 id="header-title">Catégorie sélectionnée</h3>
+                <span class="subtitle">Organisez votre journée</span>
+            </div>
+            <nav class="theme-switcher">
+                <button type="button" data-theme="day">Jour</button>
+                <button type="button" data-theme="night">Nuit</button>
+                <button type="button" data-theme="nature">Nature</button>
+            </nav>
+        </header>
+        <main>
+            <section class="category-details">
+                <h2 id="category-title">Informations de la catégorie</h2>
+                <div id="category-content">
+                    <p id="category-message">Chargement...</p>
+                    <p><strong>Nom :</strong> <span id="category-name"></span></p>
+                    <div>
+                        <strong>Sous-catégories :</strong>
+                        <ul id="category-elements"></ul>
+                    </div>
+                    
+                    
+                </div>
+
+                <button id="start-btn" type="button">COMMENCER</button>
+                <a class="button" href="./homePage.html">Retour</a>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { StorageDB } from "../models/data.js";
+
+        const currentCategorieRaw = localStorage.getItem('currentCategorie');
+        const titleEl = document.getElementById('category-title');
+        const headerTitle = document.getElementById('header-title');
+        const messageEl = document.getElementById('category-message');
+        const nameEl = document.getElementById('category-name');
+        const elementsEl = document.getElementById('category-elements');
+        const startBtn = document.getElementById('start-btn');
+        const themeButtons = document.querySelectorAll('[data-theme]');
+
+        const applyTheme = name => {
+            document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
+            document.body.classList.add(`theme-${name}`);
+            localStorage.setItem('appTheme', name);
+            themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
+        };
+
+        const initTheme = () => {
+            const savedTheme = localStorage.getItem('appTheme') || 'day';
+            applyTheme(savedTheme);
+            themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
+        };
+
+        const renderCategory = () => {
+            if (!currentCategorieRaw) {
+                titleEl.textContent = 'Aucune catégorie sélectionnée';
+                headerTitle.textContent = 'Aucune catégorie';
+                messageEl.textContent = 'Veuillez retourner à la page des catégories et en choisir une.';
+                return;
+            }
+
+            try {
+                const cat = JSON.parse(currentCategorieRaw);
+                const name = cat.nom || 'Catégorie';
+                const items = (cat.elements || []).filter(Boolean);
+
+                titleEl.textContent = name.toUpperCase();
+                headerTitle.textContent = `Que comptez-vous faire en ${name} ?`;
+                messageEl.textContent = '';
+                nameEl.textContent = name;
+
+                items.forEach((item, idx) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <label for="task${idx}">
+                            <span>${item}</span>
+                            <input type="checkbox" id="task${idx}" value="${item}">
+                        </label>
+                    `;
+                    elementsEl.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+                titleEl.textContent = 'Erreur de lecture';
+                messageEl.textContent = 'Les informations ne peuvent pas être affichées.';
+            }
+        };
+
+        startBtn.addEventListener('click', async () => {
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+            
+            if (checked.length === 0) {
+                alert('Sélectionnez au moins une tâche');
+                return;
+            }
+
+            const db = new StorageDB('taskModule', { persist: true, delay: 30 });
+            
+            db.clear() //On nettoie d'abord le taskModule
+            for (const el of checked) {
+                await db.insert({ name: el.value });
+            }
+
+            alert(`${checked.length} tâche(s) prêtes à être chagée(s)`);
+            location.href = './start.html';
+        });
+
+        initTheme();
+        renderCategory();
+    </script>
+    </script>
+</body>
+</html>

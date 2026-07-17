@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle catégorie</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer type="module"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h3>Nouvelle Catégorie</h3>
+                <span class="subtitle">Créez une catégorie personnalisée</span>
+            </div>
+            <nav class="theme-switcher">
+                <button type="button" data-theme="day">Jour</button>
+                <button type="button" data-theme="night">Nuit</button>
+                <button type="button" data-theme="nature">Nature</button>
+            </nav>
+        </header>
+        <main>
+            <form class="card">
+                <div class="form-row">
+                    <label for="category-name">Nom de la catégorie</label>
+                    <input id="category-name" type="text" class="category-name" placeholder="Ex: Études, Ménage..." required>
+                </div>
+
+                <div class="form-row">
+                    <label>Sous-catégories</label>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">Petites tâches à accomplir</p>
+                    <div class="sub-categories-container"></div>
+                    <button class="sub-plus-btn" type="button">+ Ajouter une sous-catégorie</button>
+                </div>
+
+                <div class="form-row" style="margin-top: 1.5rem;">
+                    <button type="submit" class="submit-btn">Créer la catégorie</button>
+                    <a href="./homePage.html" class="button">Annuler</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
