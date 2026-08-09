@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav id="nav-menu">
+                <a href="./homePage.html" >Accueil</a>
+                <a href="./planing.html" >Planifier</a>
+                <a href="./statistics.html" >Statistiques</a>
+                <a href="./settings.html" class="active-link">Reglages</a>
+            </nav>
+            <nav class="theme-switcher">
+                <button type="button" data-theme="day">Jour</button>
+                <button type="button" data-theme="night">Nuit</button>
+                <button type="button" data-theme="nature">Nature</button>
+            </nav>
+            <!--   -->
+        </header>
+        <div>
+                <h3>Personal Workflow</h3>
+                <span class="subtitle">Organisation de vos activités groupées en catégories</span>
+                <ul>
+                    <li class="purge-cache">Effacer l'historique <br> 
+                        <p>Cette oprération supprimera définitive tout les enregistrements de vos travaux</p>
+                    </li>
+                    <li class="purge-cache">Temps de reférence du compteur<br> 
+                        <p>temps total par rapport au quel est calculé la progression des taches</p><br>
+                        <div class="drop-down">
+                            <input type="number" id="default-duration">
+                            <select name="" id="default-duration-tip">
+                                <option value="secondes">s</option>
+                                <option value="minutes">m</option>
+                                <option value="heures">h</option>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+    </div>
+    <script src="../models/settings.js"></script>
+    <script type="module">
+        import { StorageDB } from "../models/data.js";
+        document.querySelector(".purge-cache")
+        .addEventListener("click", async (ev) => {
+            if(confirm("Voulez-vous vraiment effacer l'historique de vos actions?")){
+                const db = new StorageDB("flowRecord")
+                db.clear()
+                alert("L'historique a été completement effacée")
+            }
+        })
+
+        document.getElementById("defaut-duration")
+        .addEventListener("change", ev => {
+            ev.preventDefault()
+            let durationTip = document.getElementById("default-duration-tip").value
+            let duration = ev.currentTarget.value
+            localStorage.setItem("defaultDuration", JSON.stringify({duration: duration, durationTip: durationTip}))
+        })
+    </script>
+</body>
+</html>

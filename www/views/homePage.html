@@ -9,145 +9,203 @@
 <body>
     <div class="container">
         <header>
+            <nav id="nav-menu">
+                <a href="./homePage.html" class="active-link">Accueil</a>
+                <a href="./planing.html">Planifier</a>
+                <a href="./statistics.html">Statistiques</a>
+                <a href="./settings.html">Reglages</a>
+            </nav>
             <div>
                 <h3>Personal Workflow</h3>
                 <span class="subtitle">Organisation de vos activités groupées en catégories</span>
             </div>
-            <nav class="theme-switcher">
-                <button type="button" data-theme="day">Jour</button>
-                <button type="button" data-theme="night">Nuit</button>
-                <button type="button" data-theme="nature">Nature</button>
-            </nav>
-        </header>
-        <main>
-            <section class="card">
-                <h2>Catégories</h2>
-                <div class="seances">
-                <!-- <article>
-                    <h3>PROJETS</h3>
-                    <ul>
-                        <li>
-                            <p>PWA</p>
-                            <progress width="10"></progress>
-                        </li>
-                        <li>spline</li>
-                        <li>Divers</li>
-                    </ul>
-                </article> -->
-                <article data-name="etude">
-                    <h3>ETUDES</h3>
-                    <ul>
-                        <li>Maths</li>
-                        <li>Programmation C</li>
-                        <li>Programmation Java</li>
-                    </ul>
-
-                </article>
-                <article data-name="menage">
-                    <h3>Menage</h3>
-                     <ul>
-                        <li>Lessive</li>
-                        <li>vessel</li>
-                        <li>Divers</li>
-                    </ul>
-                </article>
-                <article data-name="lecture">
-                    <h3>Lecture</h3>
-                     <ul>
-                        <li>Nos astres opposés</li>
-                        <li>Bible</li>
-                        <li></li>
-                    </ul>
-                </article>
-                <article data-name="scan">
-                    <h3>SCAN</h3>
-                     <ul>
-                        <li>SOLO LEVELING</li>
-                        <li>THE BEGINING </li>
-                        <li></li>
-                    </ul>
-                </article>
-                
-            </div>
-            <div class="actions">
-                <button class="plus">+</button>
-                <button class="projet">PROJETS</button>
-            </div>
-        </section>
-    </div>
     
+            <!--   -->
+        </header>
+        <div class="actions">
+            <button class="plus">+</button>
+            <button class="projet">PROJETS</button>
+        </div>
+        <button class="start">commencer <br> <span class="module-number"></span></button>
+        <main id="mainContainer"> 
+        </main>
+
+        
+    </div>
+    <script src="../models/settings.js"></script>    
     <script type="module">
         import { StorageDB } from '../models/data.js';
 
-        const db = new StorageDB('categories', { persist: true, delay: 10 });
+        const db = new StorageDB('flowRecord', { persist: true, delay: 10 });
         const plusBtn = document.querySelector('.plus');
-        const seances = document.querySelector('.seances');
-        const themeButtons = document.querySelectorAll('[data-theme]');
-
-        const applyTheme = name => {
-            document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
-            document.body.classList.add(`theme-${name}`);
-            localStorage.setItem('appTheme', name);
-            themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
-        };
-
-        const initTheme = () => {
-            const savedTheme = localStorage.getItem('appTheme') || 'day';
-            applyTheme(savedTheme);
-            themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
-        };
-
-        const createArticleFromRecord = rec => {
-            const article = document.createElement('article');
-            article.dataset.name = (rec.name || rec.nom || rec._id || 'categorie').toString();
-
-            const h3 = document.createElement('h3');
-            h3.textContent = (rec.name || rec.nom || (`Catégorie ${article.dataset.name}`)).toString().toUpperCase();
-
-            const ul = document.createElement('ul');
-            const items = [...(rec.subCategories || rec.elements || rec.items || [])];
-            if (!items.length && Array.isArray(rec.children)) items.push(...rec.children);
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item;
-                ul.appendChild(li);
-            });
-
-            article.append(h3, ul);
-            return article;
-        };
+        const startBtn = document.querySelector(".start")
+        const counterLayout = document.querySelector(".module-number")
+        const mainContainer = document.querySelector('#mainContainer');
 
         const attachArticleHandlers = () => {
-            seances.querySelectorAll('article').forEach(article => {
-                article.addEventListener('click', () => {
-                    const elements = [...article.querySelectorAll('li')]
-                        .map(li => li.textContent.trim())
-                        .filter(Boolean);
-
-                    localStorage.setItem('currentCategorie', JSON.stringify({
-                        nom: article.dataset.name,
-                        elements,
-                    }));
-
-                    location.href = './category.html';
-                });
-            });
+            let checkedTasks = []
+            mainContainer.querySelectorAll("article").forEach(article => {
+                handleCheckState(article)            
+            })
+            console.log(checkedTasks);
         };
+
+        startBtn.addEventListener("click", ev => {
+            ev.preventDefault()
+            let checkedTasks = []
+            mainContainer.querySelectorAll("article").forEach(article => {
+                let element = {}
+                if (article.dataset.checked === "true") {
+                    element.categoryName = article.parentElement.parentElement.id
+                    element.taskName = article.querySelector("span").dataset.taskName
+                    checkedTasks.push(element)
+                }           
+            })
+            console.log(checkedTasks);
+            
+        })
+
+        const handleCounterState = (Boolean) => {
+            if (Boolean) {
+                if (counterLayout.innerHTML === "") {
+                    counterLayout.innerHTML = 1
+                    return
+                }
+                counterLayout.innerHTML = parseInt(counterLayout.innerHTML) + 1
+            } else {
+                if (counterLayout.innerHTML == 1) {
+                    counterLayout.innerHTML = ''
+                    return
+                }
+                counterLayout.innerHTML = parseInt(counterLayout.innerHTML) - 1
+            }
+            return
+        }
+
+        const handleCheckState = (article)=>{
+            article.addEventListener("click", ev=>{
+                const state = article.dataset.checked
+                if (state === "false") {
+                    article.dataset.checked = true
+                    article.style.border = "2px solid green"
+                    handleCounterState(true)
+                }else{
+                    article.dataset.checked = false
+                    article.style.border = "1px solid rgba(255, 255, 255, 0.18)"
+                    handleCounterState(false)
+                }
+            })
+        }
+        const createSection = (categoryName) =>{
+            const section = document.createElement("section")
+            section.id = categoryName
+            section.innerHTML = `
+                <h3 style="color: rgba(0,0,0, .6); margin:20px 10px ;">${categoryName}</h3>
+                <div class="wrapper"></div>
+            `
+            mainContainer.append(section)
+        }
+
+        const attachArticleToSection = (rec) =>{
+            const article = document.createElement("article")
+            article.classList.add("card") 
+            article.dataset.checked = false
+            article.innerHTML = `
+                <span class="taskName" data-name="${rec.taskName}">${rec.taskName}</span>
+                <div class="additionalInfo"></div>
+            `
+
+            document.getElementById(rec.categoryName)
+            .querySelector(".wrapper")
+            .append(article)
+        }
 
         const renderCategories = async () => {
             const records = await db.all();
+
             if (records?.length) {
-                seances.innerHTML = '';
-                records.forEach(rec => seances.appendChild(createArticleFromRecord(rec)));
+                mainContainer.innerHTML = '';
+                records.forEach((rec, idx) => {
+                    let section = document.getElementById(rec.categoryName)
+                    if (section) {
+                        attachArticleToSection(rec)
+                    }else{
+                        createSection(rec.categoryName)
+                        attachArticleToSection(rec)
+                    }
+                });
             }
+            console.log(records);
+            
             attachArticleHandlers();
         };
+
+        const initCategories = async () => {
+            const categories = [
+                {
+                    taskName : "Pompes",
+                    categoryName :  "Sport",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Squad",
+                    categoryName :  "Sport",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Footing",
+                    categoryName :  "Sport",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Lessive",
+                    categoryName :  "Menage",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Vessel",
+                    categoryName :  "Menage",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Nos astres opposés",
+                    categoryName :  "Etude",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Programmation",
+                    categoryName :  "Etude",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Mathématiques",
+                    categoryName :  "Etude",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                },
+                {
+                    taskName : "Réseau & Sécurité",
+                    categoryName :  "Etude",
+                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
+                }
+            ]
+            
+            
+            // const dbIsSet = 
+            if((await db.all()).length != 0) return
+            else  categories.forEach(async record => {
+                await db.insert(record) 
+            })
+
+           
+
+        }
 
         plusBtn.addEventListener('click', () => {
             location.href = './plusAction.html';
         });
 
-        initTheme();
+        initCategories()
         renderCategories();
+        
     </script>
 </html>

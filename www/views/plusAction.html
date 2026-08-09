@@ -6,13 +6,83 @@
     <title>Nouvelle catégorie</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer type="module"></script>
+    <script src="../models/settings.js" defer type="module"></script>
+    <style>
+        .form-row{
+            position: relative;
+        }
+
+        .form-row select{
+            appearance: none;
+            background: transparent;
+            border:  none;
+            border-left: 2px solid;
+            padding: 5px;
+            width: 40px;
+        }
+
+        .form-row select:focus{
+            outline: none;
+        }
+
+        .form-row select, .select-arrow{
+            position: absolute ;
+            top: 57% ;
+            right: 5px;
+        }
+
+        .form-row select option{
+            background-color: rgba(24, 23, 52, 0.892);
+        }
+
+        .select-arrow{
+            padding: 5px 10px;
+            /* pointer-events: none; */
+            font-size: 18px;
+            cursor: pointer;
+            width: max-content;
+            border: none;
+        }
+
+       .drop{
+        position: absolute;
+        top: 95%;
+        padding: 5px;
+        display: none;
+        background: rgb(38, 41, 67);
+        width: 100%;
+        font-weight: 600;
+        z-index: 2;
+       }
+
+       .drop span{
+        text-align: right;
+        padding: 10px;
+        cursor: pointer;
+       }
+
+       .drop span:hover{
+        background: rgb(45, 48, 73);
+
+       }
+       #drop-input{
+        display: none;
+       }
+
+       #drop-input:checked~.drop{
+        display: flex;
+        flex-direction: column;
+        transform: translateY(0px);
+       }
+
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div>
-                <h3>Nouvelle Catégorie</h3>
-                <span class="subtitle">Créez une catégorie personnalisée</span>
+                <h3>Nouvelle Tâche</h3>
+                <p>Ajoutez de nouvelles tâches à votre liste de tâche</p>
             </div>
             <nav class="theme-switcher">
                 <button type="button" data-theme="day">Jour</button>
@@ -23,19 +93,29 @@
         <main>
             <form class="card">
                 <div class="form-row">
-                    <label for="category-name">Nom de la catégorie</label>
-                    <input id="category-name" type="text" class="category-name" placeholder="Ex: Études, Ménage..." required>
+                    <label for="category-name">Catégorie</label>
+                    <input id="category-input" type="text" class="category-name" placeholder="Ex: Études, Ménage..." required>
+                    <select name="" id="">
+                        <option value=""></option>
+                        <option value="">Sport</option>
+                        <option value="">Etudes</option>
+                    </select>
+                    <label for="drop-input" class="select-arrow">&#9660;</label>
+                    <input type="checkbox" name="dropy" id="drop-input" >
+                    <div class="drop">
+                    </div>
+                    
                 </div>
 
                 <div class="form-row">
-                    <label>Sous-catégories</label>
-                    <p style="font-size: 0.9rem; opacity: 0.8;">Petites tâches à accomplir</p>
+                    <label>Tâche</label>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">Les tâches appartenant a la categorie ci haut</p>
                     <div class="sub-categories-container"></div>
-                    <button class="sub-plus-btn" type="button">+ Ajouter une sous-catégorie</button>
+                    <button class="sub-plus-btn" type="button">+ Ajouter une nouvelle tâche</button>
                 </div>
 
                 <div class="form-row" style="margin-top: 1.5rem;">
-                    <button type="submit" class="submit-btn">Créer la catégorie</button>
+                    <button type="submit" class="submit-btn">Créer les tâches</button>
                     <a href="./homePage.html" class="button">Annuler</a>
                 </div>
             </form>

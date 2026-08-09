@@ -16,8 +16,14 @@
         <div class="titles">
             <h2 class="categorie-title"></h2> <li></li> <h4 class="task-title"></h4>
         </div>
-        <div >
-            <h1 class="timeLayout">00h00m00s</h1>
+        <div class="timer">
+            <svg class="progress-ring" width="300" height="300">
+                <!-- cercle de fond -->
+                 <circle class="ring-bg" id="timer-ring-1" stroke="gray" stroke-width="4" fill="transparent" r="140" cx="150" cy="150"></circle>
+                 <!-- cercle de progression -->
+                  <circle class="ring-pg" id="timer-ring-2" stroke="white" stroke-width="4" fill="transparent" r="140" cx="150" cy="150"></circle>
+            </svg>
+            <h2 class="timeLayout">00:00:00</h2>
         </div>
         <div class="firstButtons">
             <button class="play" >Play</button>
@@ -63,7 +69,7 @@
     <script src="../models/flow.js" type="module"></script>
     <script type="module">
         let title = document.querySelector("title")
-        title.innerText = JSON.parse(localStorage.getItem("currentCategorie")).nom
+        title.innerText = JSON.parse(localStorage.getItem("currentCategorie")).name
     
     </script>
 </body>

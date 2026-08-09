@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav id="nav-menu">
+                <a href="./homePage.html" >Accueil</a>
+                <a href="./planing.html" >Planifier</a>
+                <a href="./statistics.html" class="active-link">Statistiques</a>
+                <a href="./settings.html">Reglages</a>
+            </nav>
+            <div>
+                <h4>Statistiques</h4>
+                <span class="subtitle">Recap de votre fidelite et constance</span>
+            </div>
+            
+    
+            <!--   -->
+        </header>
+        <main>
+                <section>
+                    <h3>General</h3>
+                    <p>Proportion avec laquelle vos taches ont occupes votre emploi de temps</p>
+                    <select name="period" id="">
+                        <option value="ceMois">General</option>
+                        <option value="mois">Ce mois</option>
+                        <option value="trimestre">Ce trimestre</option>
+                        <option value="semestre">Ce semestre</option>
+                    </select>
+                    <div id="graphique-general-baton"></div>
+                    <div id="graphique-general-polygon"></div>
+                </section>
+            </main>
+    </div>
+    <script src="../models/SerieStatistique.js"></script>
+    <script type="module">
+        import { StorageDB } from "../models/data.js";
+        import { Flow } from "../models/flow.js";
+    
+        const db = new StorageDB("flowRecord")
+
+        // const load = async () => {
+        //     let synthetizedRecord = []
+            
+        //     const records = await db.all();
+        //     if (records?.length) {
+        //         console.log(records);
+        //         let tmp = await db.find({"title": "Divers"});
+        //         let tmp2 = {}
+        //         tmp2.name = tmp[0].title
+        //         tmp2.value = tmp.length
+        //         console.log(tmp2);
+
+        //         const dbl = new StorageDB('flowRecord', { persist: true, delay: 10 });
+        //         console.log(await dbl.all());
+                
+                
+        //     } else {
+        //         console.log("There is no longer records here");
+                
+                
+        //     }
+
+        // }
+        // load()
+
+        Flow.resumedData()
+
+
+
+
+
+        const applyTheme = name => {
+            document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
+            document.body.classList.add(`theme-${name}`);
+            localStorage.setItem('appTheme', name);
+            themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
+        };
+
+        const initTheme = () => {
+            const savedTheme = localStorage.getItem('appTheme') || 'day';
+            applyTheme(savedTheme);
+            themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
+        };
+        // initTheme()
+    </script>
+    <script>
+
+    </script>
+</body>
+</html>

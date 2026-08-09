@@ -1,13 +1,29 @@
+import { StorageDB } from "../models/data.js";
 
+const db = new StorageDB('flowRecord', { persist: true, delay: 30 });
 const container = document.querySelector('.sub-categories-container');
 
 export function updateSubCategoryNames() {
-
-    container.querySelectorAll('.sub-category-input').forEach((input, idx) => {
+    const subCategoryInputLength = document.querySelectorAll(".sub-category-row").length
+    container
+    .querySelectorAll('.sub-category-input')
+    .forEach((input, idx) => {
         input.name = `sub-${idx + 1}`;
-        input.value = input.value.trim()[0].toUpperCase() + input.value.trim().slice(1)
-              
+        if (input.value.trim()[0]) {
+            
+            input.value = input.value.trim()[0].toUpperCase() + input.value.trim()?.slice(1)
+                  
+        } else if(idx !== subCategoryInputLength - 1) {
+            let deleteButton = input.nextElementSibling
+            deleteButton ? removeSubCategory(deleteButton) : console.log("Delete button not found");
+        }
     });
+}
+
+export async function getCategories() {
+    const records = await db.all()
+    const categories = [...new Set(records.map(r => r.categoryName))]
+    return categories
 }
 
 export function createSubCategoryRow(value = '') {
@@ -82,5 +98,19 @@ export function createAndDispatchEvent(name, options = {}, root){
     },options)
     const event = new CustomEvent(name,options)
     root.dispatchEvent(event)
+}
+
+export function createElement(tagName,{id="", className="", innerHtml="", value=""}, data = {}) {
+    const element = document.createElement(tagName)
+    element.id = id
+    element.className = className
+    element.innerHtml = innerHtml
+    element.value = value
+
+    Object.keys(data).every(k => {
+        element.dataset[k] = data[k]
+    })
+
+    return element
 }
 

@@ -3,7 +3,7 @@
 export class StorageDB {
     constructor(name = 'StorageDB', options = {}) {
         this.name = name;
-        this.delay = options.delay ?? 50; // ms, pour simuler latence
+        this.delay = options.delay ?? 0; // ms, pour simuler latence
         this.persist = options.persist ?? true; // sauvegarde dans localStorage
         this.store = [];
         this._nextId = 1;
@@ -31,7 +31,7 @@ export class StorageDB {
         return new Promise(res => setTimeout(res, this.delay));
     }
 
-    _persist() {
+    _persist(doc) {
         if (this.persist && typeof localStorage !== 'undefined') {
             localStorage.setItem(this.name, JSON.stringify(this.store));
         }
@@ -76,6 +76,23 @@ export class StorageDB {
             if (match) {
                 updated++;
                 return Object.assign({}, r, patch, {updatedAt: new Date().toISOString()});
+            }
+            return r;
+        });
+        if (updated) this._persist();
+        return {updated, rows: JSON.parse(JSON.stringify(this.store))};
+    }
+
+    async patch(selector, callBack) {
+        const isId = (typeof selector === "number" || typeof selector === 'string')
+        let updated = 0
+
+        this.store = this.store.map(r => {
+            //Pour savoir si on est a l'enregistrement concidere
+            const match = isId ? (r._id == selector) : Object.keys(selector).every(k => r[k] === selector[k])
+            if (match) {
+                updated++
+                callBack(r);
             }
             return r;
         });

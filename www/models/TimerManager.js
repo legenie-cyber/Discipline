@@ -38,6 +38,7 @@ class Timer {
     this._running = false;
     this._elapsed += Date.now() - this._startTime;
     clearInterval(this._intervalId);
+    this._intervalId = null
     return this;
   }
 

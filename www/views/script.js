@@ -1,28 +1,38 @@
 import { StorageDB } from "../models/data.js";
-import { addSubCategory, createSubCategoryRow, removeSubCategory, updateSubCategoryNames } from "../models/processing.js";
+import { createElement, createSubCategoryRow, getCategories, removeSubCategory, updateSubCategoryNames } from "../models/processing.js";
 
 const form = document.querySelector('form');
 const container = document.querySelector('.sub-categories-container');
 const plusBtn = document.querySelector('.sub-plus-btn');
-const db = new StorageDB('categories', { persist: true, delay: 30 });
-const themeButtons = document.querySelectorAll('[data-theme]');
+const drop = document.querySelector(".drop")
+const db = new StorageDB('flowRecord', { persist: true, delay: 30 });
 
-const applyTheme = name => {
-    document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
-    document.body.classList.add(`theme-${name}`);
-    localStorage.setItem('appTheme', name);
-    themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
-};
+const renderCategories = async () => {
+    const categories = await getCategories()
+    categories.forEach(c => {
+        const span = document.createElement('span')
+        span.dataset.name = c
+        span.textContent = c
+        span.className = "category-span"
+        drop.append(span)
+    })
+    handleSelect(".category-span", "#category-input")
 
-const initTheme = () => {
-    const savedTheme = localStorage.getItem('appTheme') || 'day';
-    applyTheme(savedTheme);
-    themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
-};
+}
+
+const handleSelect = async (selector, inputSelector) => {
+    document.querySelectorAll(selector)
+    .forEach(el => {
+        el.addEventListener("click", ev => {
+            ev.preventDefault()
+            document.querySelector(inputSelector).value = ev.currentTarget.innerText
+        })
+    })
+}
 
 plusBtn.addEventListener('click', e => {
     e.preventDefault();
-    
+
     container.appendChild(createSubCategoryRow());
     updateSubCategoryNames();
 });
@@ -35,32 +45,33 @@ container.addEventListener('click', e => {
 
 form.addEventListener('submit', async e => {
     e.preventDefault();
-
     const categoryName = document.querySelector('.category-name').value.trim();
     const inputs = Array.from(document.querySelectorAll('.sub-category-input'));
-    const subCategories = inputs.map(i => i.value.trim()).filter(Boolean);
-
+    const sub_Categories = inputs.map(i => i.value.trim()).filter(Boolean);
     if (!categoryName) {
         alert('Entrez un nom pour la catégorie');
         document.querySelector('.category-name').focus();
         return;
     }
-
-    if (!subCategories.length) {
+    if (!sub_Categories.length) {
         alert('Ajoutez au moins une sous-catégorie');
         inputs[0]?.focus();
         return;
     }
-
-    await db.insert({ name: categoryName, subCategories });
-    alert(`Catégorie "${categoryName}" créée avec ${subCategories.length} tâche(s)`);
-    
+    sub_Categories.forEach(async el => {
+        const record = 
+        {
+            taskName : el,
+            categoryName :  categoryName,
+            sessions: [] 
+        }
+        await db.insert(record);
+    })
+    alert(`${sub_Categories.length} tâche(s) Ajoutées à votre panel`);
     form.reset();
     container.innerHTML = '';
     container.appendChild(createSubCategoryRow());
     updateSubCategoryNames();
 });
-
 container.appendChild(createSubCategoryRow());
-updateSubCategoryNames();
-initTheme();
+renderCategories()

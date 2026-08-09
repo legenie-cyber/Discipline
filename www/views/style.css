@@ -82,9 +82,29 @@ textarea {
   min-height: 100vh;
 }
 
-.carrousel-container{
-  border: 1px solid red;
+#nav-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
   width: 100%;
+  padding: 1em;
+  margin-bottom: 1rem;
+  background: rgba(192, 192, 192, 0.329);
+  border-radius: 15px;
+  position: sticky;
+  bottom: 10px;
+  font-size: 13px;
+}
+
+#nav-menu a{
+  text-decoration: none;
+  font-weight: 800;
+  color: #dbeafe;
+}
+
+.active-link{
+  border-bottom: 3px solid rgba(255, 255, 255, 0.8);
 }
 
 
@@ -138,6 +158,12 @@ header h3 {
 main {
   display: grid;
   gap: 1.75rem;
+}
+
+.wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .card,
@@ -212,7 +238,6 @@ button:hover,
 }
 
 button.plus {
-  position: absolute !important;
   bottom: 15px;
   right: 15px;
   width: 3.25rem;
@@ -322,6 +347,9 @@ button[type="submit"] {
   gap: 1rem;
   flex-wrap: wrap;
   margin-top: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .actions button,
@@ -467,9 +495,50 @@ label{
     transition: all .5s linear;
 }
 
+
+/* 
+
+  Timer action/tyle control
+
+*/
 .timer{
-  border: 2px solid;
-  padding: 8rem 4.5rem;
-  border-radius: 50%;
-  margin: 2rem auto;
+  position: relative;
+  /* padding: 8rem 4.5rem; */
+  /* border-radius: 50%; */
+  /* margin: 2rem auto; */
 }
+
+.timeLayout{
+  position: absolute;
+  top: 130px;
+  left: 85px;
+
+}
+ .progress-ring /*svg */{
+  transform: rotate(-90deg); /*orientation a partir du haut*/
+ }
+
+ .ring-pg /*cercle superieur*/{
+  /* r=140 p=876.6 */
+  stroke-dasharray: 876.6;
+  stroke-dashoffset: 87;
+  transition: stroke-dashoffset 1s linear;
+ }
+
+#timer-ring-1{
+  display: none;
+}
+
+/* .timer::after{
+  content: "";
+  height: 102%;
+  width: 102%;
+  position: absolute;
+  background-color: #ffffff2a;
+  border-radius: 50%;
+  top: -2px;
+  left: -2px;
+  background: conic-gradient(from 45deg,blue  90%, red );
+  z-index: -90;
+} */
+

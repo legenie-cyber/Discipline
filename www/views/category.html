@@ -74,8 +74,8 @@
 
             try {
                 const cat = JSON.parse(currentCategorieRaw);
-                const name = cat.nom || 'Catégorie';
-                const items = (cat.elements || []).filter(Boolean);
+                const name = cat.name;
+                const items = (cat.subCategories || []).filter(Boolean);
 
                 titleEl.textContent = name.toUpperCase();
                 headerTitle.textContent = `Que comptez-vous faire en ${name} ?`;
@@ -107,6 +107,7 @@
                 return;
             }
 
+            //for modules of current category
             const db = new StorageDB('taskModule', { persist: true, delay: 30 });
             
             db.clear() //On nettoie d'abord le taskModule
