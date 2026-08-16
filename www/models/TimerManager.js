@@ -87,6 +87,15 @@ class Timer {
     const s = String(totalSec % 60).padStart(2, "0");
     return `${h}:${m}:${s}`;
   }
+  static formatString(string){
+    const timePatch = string.split(":")
+    const hours_ms = timePatch[0] ? timePatch[0] * 3600 * 1000 : 0
+    const minutes_ms = timePatch[1] ? timePatch[1] * 60 * 1000 : 0
+    const secondes_ms = timePatch[2] ? timePatch[2] * 1000 : 0
+    const ms = timePatch[3] ? timePatch[3] : 0
+
+    return hours_ms + minutes_ms + secondes_ms + ms
+  }
 }
 
 /* ============================================================

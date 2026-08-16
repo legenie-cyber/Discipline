@@ -34,7 +34,7 @@
  * ---------------------------------------------------------------
  */
 
-class SerieStatistique {
+  export class SerieStatistique {
   /**
    * @param {Array<Object>} data - Pour type "discrete" : [{valeur, effectif}]
    *                                Pour type "classes"  : [{min, max, effectif}]
@@ -62,7 +62,7 @@ class SerieStatistique {
   _normaliser(data) {
     if (this.type === 'discrete') {
       return data
-        .map((d) => ({ valeur: Number(d.valeur), effectif: Number(d.effectif) }))
+        .map((d) => ({ valeur: Number(d.valeur), effectif: Number(d.effectif), label: d.label }))
         .sort((a, b) => a.valeur - b.valeur);
     }
     return data
@@ -79,7 +79,7 @@ class SerieStatistique {
   /** Valeur représentative de chaque ligne (valeur ou centre de classe) */
   _valeursRepresentatives() {
     return this.type === 'discrete'
-      ? this.data.map((d) => d.valeur)
+      ? this.data.map((d) => d.label ? d.label : d.valeur)
       : this.data.map((d) => d.centre);
   }
 
@@ -142,7 +142,7 @@ class SerieStatistique {
     const max = Math.max(...effs);
     return this.data
       .filter((d) => d.effectif === max)
-      .map((d) => (this.type === 'discrete' ? d.valeur : d.centre));
+      .map((d) => (this.type === 'discrete' ? (d.label ? d.label : d.valeur) : d.centre));
   }
 
   /** Classe modale + mode interpolé (formule de la classe modale) */
@@ -197,7 +197,7 @@ class SerieStatistique {
 
     if (this.type === 'discrete') {
       const idx = ecc.findIndex((c) => c >= rang);
-      return this.data[idx].valeur;
+      return this.data[idx].label || this.data[idx].valeur;
     }
 
     const idx = ecc.findIndex((c) => c >= rang);
@@ -225,6 +225,9 @@ class SerieStatistique {
 
   ecartInterquartile() {
     const { Q1, Q3 } = this.quartiles();
+    if (typeof Q1 ==="string") {
+      return 0;
+    }
     return Q3 - Q1;
   }
 
@@ -431,7 +434,7 @@ class SerieStatistique {
       .map((d, i) => {
         const colValeur =
           this.type === 'discrete'
-            ? `<td>${d.valeur}</td>`
+            ? `<td>${d.label? d.label : d.valeur}</td>`
             : `<td>[${d.min}; ${d.max}[</td><td>${d.centre}</td>`;
         return `<tr>
           ${colValeur}
@@ -483,12 +486,13 @@ class SerieStatistique {
       polygone: 'Polygone des effectifs',
       ogive: 'Courbe cumulative (ogive)',
     };
-    wrapper.innerHTML = `<p class="ss-graph-title">${titres[type] || 'Graphique'} — ${this.titre}</p>`;
+    wrapper.innerHTML = `<p class="ss-graph-title">${this.titre}</p>`;
 
     const canvas = document.createElement('canvas');
     const width = 700;
     const height = 380;
     const ratio = window.devicePixelRatio || 1;
+    
     canvas.width = width * ratio;
     canvas.height = height * ratio;
     canvas.style.height = height + 'px';
@@ -566,10 +570,11 @@ class SerieStatistique {
 
       ctx.fillStyle = '#1e293b';
       ctx.fillText(eff, xCentre, y - 6);
-
+      
       ctx.fillStyle = '#64748b';
+      
       const label =
-        this.type === 'discrete' ? d.valeur : `${d.min}-${d.max}`;
+        this.type === 'discrete' ? (d.label ? d.label : d.valeur) : `${d.min}-${d.max}`;
       ctx.fillText(label, xCentre, height - marge.bas + 16);
     });
   }

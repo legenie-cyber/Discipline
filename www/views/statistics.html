@@ -5,94 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        #hero{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            gap: 10px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        p{
+            opacity: .6;
+        }
+        .svg-stat-ring{
+            transform: rotate(180deg);
+        }
+        .info-content{
+            position: absolute;
+            top: 70%;
+            text-align: center;
+        }
+        .info-content h2{
+            margin: 0;
+        }
+    </style>
 
 </head>
 <body>
     <div class="container">
         <header>
-            <nav id="nav-menu">
-                <a href="./homePage.html" >Accueil</a>
-                <a href="./planing.html" >Planifier</a>
-                <a href="./statistics.html" class="active-link">Statistiques</a>
-                <a href="./settings.html">Reglages</a>
-            </nav>
-            <div>
-                <h4>Statistiques</h4>
-                <span class="subtitle">Recap de votre fidelite et constance</span>
-            </div>
-            
-    
-            <!--   -->
+            <button class="navigation-btn"><a href="./homePage.html"><</a></button>
+            <h4>Statistiques</h4>
         </header>
         <main>
-                <section>
-                    <h3>General</h3>
-                    <p>Proportion avec laquelle vos taches ont occupes votre emploi de temps</p>
-                    <select name="period" id="">
-                        <option value="ceMois">General</option>
-                        <option value="mois">Ce mois</option>
-                        <option value="trimestre">Ce trimestre</option>
-                        <option value="semestre">Ce semestre</option>
-                    </select>
-                    <div id="graphique-general-baton"></div>
-                    <div id="graphique-general-polygon"></div>
-                </section>
-            </main>
+            <section id="hero">
+                <p>Il semble que ce qui compte</p> <p>Occupe</p>
+                <svg class="svg-stat-ring" width="300" height="150">
+                    <circle id="stat-ring" stroke="white" stroke-width="6" fill="transparent" r="140" cx="150"></circle>
+                </svg>
+                <div class="info-content">
+                    <h2><span class="percentage">100</span>%</h2>
+                    <p>De votre temps</p>
+                </div>
+            </section>
+            <section id="general-container">
+                <div id="general-graphe"></div>
+            </section>
+        </main>
     </div>
-    <script src="../models/SerieStatistique.js"></script>
+    <script src="../models/settings.js"></script>
     <script type="module">
         import { StorageDB } from "../models/data.js";
-        import { Flow } from "../models/flow.js";
-    
+        import { SerieStatistique } from "../models/SerieStatistique.js";
+        import { createElement } from "../models/processing.js";
         const db = new StorageDB("flowRecord")
+        const data = await db.all()
+        const generalData = data.map(task => {
+            const label = task.label ? task.label : task.taskName.slice(0, 5)
+            return {valeur: 1, effectif: totalTime(task.sessions), label: label}
+        })
 
-        // const load = async () => {
-        //     let synthetizedRecord = []
+        function totalTime(sessions) {
+            let totalTime = 0
+            sessions.forEach(session => {
+                totalTime += session.timeMs / 1000
+            });
+            return totalTime
+        }
+        
+        const GeneralStat = new SerieStatistique(generalData, {type: "discrete", titre:"Statistique Génerale"})
+        
+        GeneralStat.renderGraphique("#general-graphe", 'batons')
+
+        // Pour chaque tache de facon individuelle
+        data.forEach(d => {
+            const thisId = `sect-${d.taskName}`
+            const section = createElement("section", {id: thisId})
+            const compteur = d.sessions.reduce((acc, s) =>{
+                acc[s.date.slice(0, 10)] = (acc[s.date.slice(0, 10)] || 0) + 1;
+                return acc;
+            }, {})
+
+            const dataArray =[]
+            for (const [key, value] of Object.entries(compteur)) {
+                const date = new Date(key)
+                dataArray.push({valeur: 1, effectif: value, label: key})
+            }
+            console.log(dataArray);
+            document.querySelector("main").append(section)
+
+            const thisStat = new SerieStatistique(dataArray, {type: "discrete", titre: d.taskName})
+            thisStat.renderGraphique(`#${thisId}`, 'polygone')
             
-        //     const records = await db.all();
-        //     if (records?.length) {
-        //         console.log(records);
-        //         let tmp = await db.find({"title": "Divers"});
-        //         let tmp2 = {}
-        //         tmp2.name = tmp[0].title
-        //         tmp2.value = tmp.length
-        //         console.log(tmp2);
+            
 
-        //         const dbl = new StorageDB('flowRecord', { persist: true, delay: 10 });
-        //         console.log(await dbl.all());
-                
-                
-        //     } else {
-        //         console.log("There is no longer records here");
-                
-                
-        //     }
-
-        // }
-        // load()
-
-        Flow.resumedData()
+            
 
 
-
-
-
-        const applyTheme = name => {
-            document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
-            document.body.classList.add(`theme-${name}`);
-            localStorage.setItem('appTheme', name);
-            themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
-        };
-
-        const initTheme = () => {
-            const savedTheme = localStorage.getItem('appTheme') || 'day';
-            applyTheme(savedTheme);
-            themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
-        };
-        // initTheme()
-    </script>
-    <script>
-
+            
+        });
     </script>
 </body>
 </html>

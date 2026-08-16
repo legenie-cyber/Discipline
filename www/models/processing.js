@@ -110,7 +110,12 @@ export function createElement(tagName,{id="", className="", innerHtml="", value=
     Object.keys(data).every(k => {
         element.dataset[k] = data[k]
     })
-
     return element
+}
+
+export function getRelativeDateLabel(targetDdate) {
+    const now = new Date()
+    const target = new Date(targetDdate)
+
 }
 

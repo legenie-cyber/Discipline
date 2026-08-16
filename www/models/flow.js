@@ -2,29 +2,69 @@ import { toDoList } from "./todo-script.js";
 import { getContentById } from "./processing.js";
 import { Timer, TimerKeeper } from "./TimerManager.js";
 import { StorageDB } from "./data.js";
+import { FestiveUI } from "./festiveUi.js";
 /**
  * Permet de creer plusieurs todo List en parallele
  */
 export class Flow {
     status = null
+    _ui = new FestiveUI({
+        popupPosition: 'bottom-right',
+        colors: [
+            { name: 'accent', value: '#5647ea' },
+            { name: 'particle', value: '#ffd166' },
+            { name: 'particle', value: '#3ba3c9' }
+        ]
+    });
 
-    constructor(taskModule = {}, toDoListWrapper) {
+    constructor(taskModule = {}, Wrapper) {
+        
         if (!taskModule) {
             throw new Error("L'objet fournit n'est pas supportee ou est vide");
         }
-
         this._modules = taskModule
-        this._wrapper = toDoListWrapper
+        this._wrapper = Wrapper
         this.renderModule(this._modules)
         this.keeper = new TimerKeeper();
         this.db = new StorageDB("flowRecord")
-        Flow.resumeData()
+
+        this._completed = document.querySelector(".completed .value")
+        this._stopped = document.querySelector(".stopped .value")
+        this._effectif = document.querySelector(".effectif") // ca recupere juste le premier champ d'effectif
+
+        this._effectif.innerText = this._modules.length
+        this.initPagination()
     }
 
+    /**
+     * cree et affiche les element du carrousel
+     * @param {Object} modules 
+     */
     renderModule(modules) {
         Array.from(modules).forEach((module, id)=>{
             const flowItem = new Item(module, id)
             this._wrapper.append(flowItem.element)
+        })
+    }
+
+    initPagination(){
+        for (let i = 0; i < this._modules.length ; i++) {
+            const point = document.createElement("span");
+            point.innerText = "•"
+            point.dataset.id = i
+            document.querySelector(".pagination").append(point)
+        }
+    }
+
+    updatePagination(id){
+        document.querySelectorAll(".pagination span").forEach((point, idx) => {
+            // point.style = "scale: 1;"
+                point.style.fontSize = "1rem"
+
+
+            if (id == idx) {
+                point.style.fontSize = "1.5rem"
+            }
         })
     }
 
@@ -82,7 +122,7 @@ class Item extends Flow{
     timer = null
     #ringPgRadius = 140
     #circumference = 2 * Math.PI * this.#ringPgRadius
-    #ttl = this.defaultDuration() /* time to live en miliseconde*/
+    #ttl = 0/* time to live en miliseconde*/
     #currentTurn = -1
     #activeRing = 0
     #colorIndex = 0
@@ -91,36 +131,34 @@ class Item extends Flow{
 
     constructor(module, id){
         super()
-        const currentCategorie = JSON.parse(localStorage.getItem("currentCategorie")).name
+        this.#ttl = Timer.formatString(module.time) || this.defaultDuration()
+        
         this.element = document.createElement("section")
         this.element.classList.add('ToDoList')
         this.element.dataset.id = id
         this.element.append(getContentById("timer-layout"))
 
         this.newToDoList = new toDoList(this.element)
-        this.element.querySelector(".categorie-title").innerText = currentCategorie
-        this.element.querySelector(".task-title").innerText = module.name
-
-
-        
-        this.timer = this.keeper.create("stopwatch", module.name);
+        this.element.querySelector(".categorie-title").innerText = module.categoryName
+        this.element.querySelector(".task-title").innerText = module.taskName
+       
+        this.timer = this.keeper.create("stopwatch", module.taskName);
         // le callBack est appele avec en parametre le temps ecoule (elapsed)
         this.timer.onTick((ms) => {
             this.screen.innerText = Timer.formatMs(ms)
             this.updateProgress(ms, this.#ttl)
+            this.controlTtl(ms)
         });
 
         this.circle1 = this.element.querySelector("#timer-ring-1")
         this.circle2 = this.element.querySelector("#timer-ring-2")
-        this.playBtn = this.element.querySelector(".play")
-        this.pauseBtn = this.element.querySelector(".pause")
+        this.playPauseBtn = this.element.querySelector(".play-pause")
+        // this.pauseBtn = this.element.querySelector(".pause")
         this.stopBtn = this.element.querySelector(".stop") 
         this.termineBtn = this.element.querySelector(".termine") 
         this.screen = this.element.querySelector(".timeLayout")       
 
-        this.pauseBtn.disabled = true
         this.stopBtn.disabled = true
-
         this.timerControl()        
     }
 
@@ -149,66 +187,80 @@ class Item extends Flow{
     }
 
     timerControl(){
-        this.playBtn.addEventListener("click", ev => {
+        this.playPauseBtn.addEventListener("click", ev => {
+            const currentBtn = ev.currentTarget
+            const state = currentBtn.dataset.state
 
-            if (this.pauseBtn.disabled === true && this.stopBtn.disabled === true) {
-                this.timer.start()
-                this.isRunning = true
-                this.status = "playing"
+            if (state === "play") {
 
-                // this.timer.onTick( () => {
-                //     this.screen.innerText = this.timer.formatMs(this.timer._elapsed)
-                // }, 1000)
+                if ( this.stopBtn.disabled === true)
+                    this.timer.start() 
+                else 
+                    this.timer.resume() 
+                    this.isRunning = true
+                    this.status = "playing"
+                    this.stopBtn.disabled = false
+                    currentBtn.dataset.state = "pause"
 
-                this.playBtn.disabled = true
-                this.pauseBtn.disabled = false
-                this.stopBtn.disabled = false
-            } else {
-                this.timer.resume()
-                this.isRunning = true
-                this.status = "playing"
-                this.pauseBtn.disabled = false
-                this.stopBtn.disabled = false
+            } else if (state === "pause") {
+                this.timer.pause()
+                this.status = "paused"
+                currentBtn.dataset.state = "play"
             }
+            
         })
-        this.pauseBtn.addEventListener("click", ev => {
-        
-            this.timer.pause()
-            this.pauseBtn.disabled = true
-            this.playBtn.disabled = false
-            this.status = "paused"
-        })
+
         this.stopBtn.addEventListener("click", ev => {
             this.isRunning = false
             this.status = "stoped"
             
             this.element.dataset.statu = "stoped"
-            this.playBtn.disabled = true
+            this.playPauseBtn.disabled = true
             this.stopBtn.disabled = true
-            this.pauseBtn.disabled = true
-            
             this.timer.stop()
             this.saveTask()
             this.screen.style.color = 'red'
-            this.element.children.forEach(child => {
-                child.disabled = true
-            })
+            this.element.disabled = true
         })
-        this.termineBtn.addEventListener("click", ev => {
+
+        this.termineBtn.addEventListener("click",async  ev => {
+
             this.element.dataset.statu = "termine"
             this.isRunning = false
             this.status = "ended"
             this.saveTask()
-            this.timer.stop()
+            this._completed.innerText = parseInt(this._completed.innerText) + 1
+            if (this._completed.innerText == this._effectif.innerText) {
+                this._ui.confettis()
+                 this._ui.popup("Toute les tâches sont terminées", {type: "success", title: "Terminé"})
 
+            }
+            this.timer.stop()
+            this._ui.paillettes()
+            setTimeout(() => {
+                this._ui.stopAll()
+            }, 1500);
+
+            //on bloque toute action
+            this.element.querySelector(".firstButtons").style.display = "none"
         })
+    }
+
+     controlTtl = async (ms)=>{
+        if (ms >= this.#ttl) {
+            this.timer.pause()
+            this.status = "termine"
+            await this._ui.alert("Limite de temps atteinte \n Vous pouvez cliquer sur play pour continuer", { title: 'Temps écoulé' })
+            this.playPauseBtn.dataset.state = "play" // le state est pour des fin purement visulle et n'impacte en rien le timer
+            this.controlTtl = () => null
+        }
     }
 
     saveTask(){
         // categoryName :  this.element.querySelector(".categorie-title").innerText,
         // taskName : this.element.querySelector(".task-title").innerText ,
         const session = {
-            timeMs : this.timer._elapsed,
+            timeMs : Timer.formatString(this.screen.innerText),
             time : this.screen.innerText,
             status: this.status,
             date: (new Date).toISOString(),
@@ -221,7 +273,7 @@ class Item extends Flow{
 
         try {
             const taskName = this.element.querySelector(".task-title").innerText
-            this.db.patch(taskName, (r) =>{r.sessions.push(session)})
+            this.db.patch({taskName: taskName}, (r) =>{r.sessions.push(session)})
             console.log("Insertion reussie");
         } catch (error) {
             throw new Error("L'insertion n'a pas pu se faire");
@@ -273,5 +325,20 @@ class Item extends Flow{
 }
 
 let modules = JSON.parse(localStorage.getItem("taskModule"))
+console.log(modules);
 
 const flow = new Flow(modules, document.getElementById("wrapper"))
+const tasks = document.querySelectorAll('.ToDoList')
+
+const observer =  new IntersectionObserver(entries =>{
+    entries.forEach(entry =>{
+        if (entry.isIntersecting) {
+            flow.updatePagination(entry.target.dataset.id)
+            // console.log(entry.target.dataset.id);
+        }
+    })
+}, {root: document.querySelector("#wrapper"), threshold: 0.6})
+
+tasks.forEach(task => {
+    observer.observe(task) 
+});

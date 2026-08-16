@@ -100,7 +100,7 @@ textarea {
 #nav-menu a{
   text-decoration: none;
   font-weight: 800;
-  color: #dbeafe;
+  color: inherit;
 }
 
 .active-link{
@@ -117,10 +117,22 @@ header {
   flex-wrap: wrap;
 }
 
+.navigation-btn{
+  font-weight: 800;
+  font-size: 1.4rem;
+  padding: 9px 18px;
+  border-radius: 50%;
+}
+
+.navigation-btn a{
+  text-decoration: none;
+}
 header h3 {
   font-size: 1.55rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  display: flex;
+  gap: 5px;
 }
 
 .subtitle {
@@ -237,24 +249,18 @@ button:hover,
   transform: translateY(-2px);
 }
 
-button.plus {
-  bottom: 15px;
-  right: 15px;
-  width: 3.25rem;
-  height: 3.25rem;
-  font-size: 1.6rem;
-  display: grid;
-  place-items: center;
-}
+
 
 button.projet {
   background: rgba(255, 255, 255, 0.22);
+  width: 100%;
   min-width: 130px;
+
 }
 
 form {
   display: grid;
-  gap: 1.1rem;
+  gap: 1rem;
 }
 
 form > div,
@@ -342,21 +348,11 @@ button[type="submit"] {
   text-decoration: none;
 }
 
-.actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.actions button,
+/* .actions button,
 .actions a {
   flex: 1;
   min-width: 140px;
-}
+} */
 
 .submit-btn {
   background: linear-gradient(135deg, var(--accent), var(--accent-strong)) !important;
@@ -407,6 +403,7 @@ button[type="submit"] {
   scroll-snap-align: center;
 
   padding: 50px;
+  padding-top: 90px;
   height: max-content;
 }
 

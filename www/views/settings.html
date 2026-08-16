@@ -5,6 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .container{
+            padding: 0;
+            font-weight: 700;
+        }
+
+        form{
+            padding: .7rem;
+        }
+        h3{
+            margin: 15px;
+        }
+        input::placeholder{
+            font-weight: 800;
+        }
+        input{
+            margin: 10px auto;
+        }
+        #me{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        div.carrousel{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 10px auto;
+            
+        }
+        div.carrousel > *{
+            height: 140px;
+            padding: 0;
+            position: relative;
+            opacity: .6;
+            transition: opacity .5s ease;
+        }
+        
+        .active{
+            opacity: 1 !important;
+        }
+
+        div.carrousel article .title{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(164, 162, 162, 0.757);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(0, 0, 0, .2);
+        }
+        .color[data-color="violet"]{
+            background: violet;
+        }
+        .color[data-color="yellow"]{
+            background: yellow;
+        }
+        .color[data-color="pink"]{
+            background: pink;
+        }
+        .color[data-color="green"]{
+            background: green;
+        }
+        .color[data-color="blue"]{
+            background: blue;
+        }
+        .color[data-color="red"]{
+            background: red;
+        }
+        
+
+        #binome label{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+        }
+        #binome label input{
+        margin: 0;
+        }
+        .submitBtn{
+            width: 100%;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 10px auto;
+        }
+    </style>
 
 </head>
 <body>
@@ -16,22 +107,17 @@
                 <a href="./statistics.html" >Statistiques</a>
                 <a href="./settings.html" class="active-link">Reglages</a>
             </nav>
-            <nav class="theme-switcher">
-                <button type="button" data-theme="day">Jour</button>
-                <button type="button" data-theme="night">Nuit</button>
-                <button type="button" data-theme="nature">Nature</button>
-            </nav>
+           
             <!--   -->
         </header>
-        <div>
-                <h3>Personal Workflow</h3>
-                <span class="subtitle">Organisation de vos activités groupées en catégories</span>
-                <ul>
-                    <li class="purge-cache">Effacer l'historique <br> 
-                        <p>Cette oprération supprimera définitive tout les enregistrements de vos travaux</p>
-                    </li>
-                    <li class="purge-cache">Temps de reférence du compteur<br> 
-                        <p>temps total par rapport au quel est calculé la progression des taches</p><br>
+        <main>
+            <form >
+                <section class="row" id="me">
+                    <h3>Moi</h3>
+                    <label for="id">Id: <input type="text" placeholder="id:237" id="id"></label>
+                    <input type="text" placeholder="Prénom" id="subName">
+                    <input type="text" placeholder="Slug" id="slug">
+                    <article class="purge-cache">Temps de reférence du compteur<br> 
                         <div class="drop-down">
                             <input type="number" id="default-duration">
                             <select name="" id="default-duration-tip">
@@ -40,13 +126,97 @@
                                 <option value="heures">h</option>
                             </select>
                         </div>
-                    </li>
-                </ul>
-            </div>
+                    </article>
+                    <button class="submitBtn">&#x2713;</button>
+                </section>
+            
+                <section class="row" id="theme">
+                    <h3>Thème</h3>
+                    <div class="mode">
+                        <h3>Mode</h3>
+                         <div class="theme-switcher carrousel">
+                            <button type="button theme" data-theme="day">Jour</button>
+                            <button type="button theme" data-theme="night">Nuit</button>
+                            <button type="button theme" data-theme="nature">Nature</button>
+                         </div>
+                    </div>
+                    <div class="color">
+                        <h3>Pallette de couleur</h3>
+                        <div class="carrousel">
+                            <article class="color" data-color="violet"><span class="title">violet</span></article>
+                            <article class="color" data-color="yellow"><span class="title">Jaune</span></article>
+                            <article class="color" data-color="pink"><span class="title">Rose</span></article>
+                            <article class="color" data-color="green"><span class="title">Vert</span></article>
+                            <article class="color" data-color="blue"><span class="title">Bleu</span></article>
+                            <article class="color" data-color="red"><span class="title">Rouge</span></article>
+                        </div>
+                    </div>
+                    <div class="univers">
+                        <h3>Univers</h3>
+                        <div class="carrousel">
+                            <article data-univers="nounours" class="icon"><span class="title">Nounours</span></article>
+                            <article data-univers="vegetatif" class="icon"><span class="title">Végetatif</span></article>
+                            <article data-univers="alimentaire" class="icon"><span class="title">Alimentaire</span></article>
+                            <article data-univers="animalier" class="icon"><span class="title">Animlier</span></article>
+                            <article data-univers="sport" class="icon"><span class="title">Sportif</span></article>
+                            <article data-univers="tech" class="icon"><span class="title">Tech</span></article>
+                        </div>
+                    </div>
+                    <div class="papierPeint">
+                        <h3>papier peint</h3>
+                        <div class="carrousel">
+                            <article data-peintUrl="" class="peint"><span class="title">Papier1</span></article>
+                            <article data-peintUrl="" class="peint"><span class="title">Papier2</span></article>
+                            <article data-peintUrl="" class="peint"><span class="title">Papier3</span></article>
+                            <article data-peintUrl="" class="peint"><span class="title">Papier4</span></article>
+                            <article data-peintUrl="" class="peint"><span class="title">Papier5</span></article>
+                            <article data-peintUrl="" class="peint"><span class="title">Papier6</span></article>
+                        </div>
+                    </div>
+                    
+                </section>
+                
+                <section class="row" id="binome">
+                    <h3>Binôme</h3>
+                    <input type="text" placeholder="Prénom du Binôme">
+                    <label for="info">Consulter les infos</label>
+                    <h4>Autorisation de partage</h4>
+                    <div >
+                        <li><label for="prog"><span>Programmations</span> <input type="checkbox" name="prog" id="prog"></label></li>
+                        <li><label for="list"><span>Listes</span> <input type="checkbox" name="list" id="list"></label></li>
+                        <li><label for="state"><span>Etat</span> <input type="checkbox" name="state" id="state"></label></li>
+                        <li><label for="stat"><span>Statistiques</span> <input type="checkbox" name="stat" id="stat"></label></li>
+                    </div>
+                    <button>Changer de binôme</button>
+                </section>
+
+                <section class="row" id="history">
+                    <h3>Historique</h3>
+                    
+                    <div>Consulter l'historique</div>
+                    <div>Supprimer l'historique</div>
+                    <div>Partager l'historique</div>
+                </section>
+                <br>
+            </form>
+        </main>
     </div>
     <script src="../models/settings.js"></script>
+    <script>
+        // const renderIcons = async ()=>{
+        //     const icons = await loadIcons()
+        //     document.querySelectorAll(".icon").forEach(card => {
+        //         const iconLabel = card.dataset.icon
+        //         card.innerHTML += icons?[iconLabel][5]
+        //     })
+                       
+        // }
+        // renderIcons()
+    </script>
     <script type="module">
         import { StorageDB } from "../models/data.js";
+        let metaData = {me: {id : String, subName: String, slug: String, defaultTime: {duration: Number, durationTip: String}}, theme: {mode: String, color: String, univers: String, papierPeint: URL}, binome: {subName: String, authorization:{programmation: Boolean(false), list: Boolean(false), state: Boolean(false), stat: Boolean(false)}}}
+        
         document.querySelector(".purge-cache")
         .addEventListener("click", async (ev) => {
             if(confirm("Voulez-vous vraiment effacer l'historique de vos actions?")){
@@ -56,13 +226,47 @@
             }
         })
 
-        document.getElementById("defaut-duration")
-        .addEventListener("change", ev => {
-            ev.preventDefault()
-            let durationTip = document.getElementById("default-duration-tip").value
-            let duration = ev.currentTarget.value
-            localStorage.setItem("defaultDuration", JSON.stringify({duration: duration, durationTip: durationTip}))
+        document.querySelectorAll("div.carrousel > *").forEach(card => {
+            card.addEventListener("click", ev=>{
+                ev.preventDefault()
+
+                Array.from(card.parentElement.children).forEach(child => { child.classList.remove("active") });
+                card.classList.add("active")
+                if (card.classList.contains("color")) metaData.theme.color = card.dataset.color
+                else if (card.classList.contains("icon")) metaData.theme.univers = card.dataset.univers
+                else if (card.classList.contains("peint")) metaData.theme.papierPeint = card.dataset.peintUrl
+                else if (card.classList.contains("theme")) metaData.theme.mode = card.dataset.theme
+                localStorage.setItem("metaData", JSON.stringify(metaData))
+                
+            })
         })
+
+        document.querySelectorAll("#binome input[type='checkbox']").forEach(input => {
+            input.addEventListener("change", ev => {
+                ev.preventDefault()
+                if (input.id === "prog" ) metaData.binome.authorization.programmation = input.checked 
+                if (input.id === "list" ) metaData.binome.authorization.list = input.checked 
+                if (input.id === "state") metaData.binome.authorization.state = input.checked 
+                if (input.id === "stat" ) metaData.binome.authorization.stat = input.checked 
+                localStorage.setItem("metaData", JSON.stringify(metaData))
+                console.log(metaData.binome.authorization);
+
+            })
+        })
+
+        // Gestion des meta donnees
+        document.querySelector(".submitBtn")
+        .addEventListener("click", ev => {
+            ev.preventDefault()
+            metaData.me.id = document.querySelector("#id").value
+            metaData.me.subName = document.querySelector("#subName").value
+            metaData.me.slug= document.querySelector("#slug").value
+            metaData.me.defaultTime.duration = Number(document.getElementById("default-duration-tip").value)
+            metaData.me.defaultTime.durationTip = document.getElementById("default-duration").value
+            localStorage.setItem("metaData", JSON.stringify(metaData))
+        })
+
+        
     </script>
 </body>
 </html>

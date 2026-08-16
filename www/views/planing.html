@@ -5,24 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planification</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        *{
+            font-weight: 700;
+        }
+
+        header{
+            position: sticky;
+            top: 0px;
+        }
+        form{
+            background: transparent;
+        }
+        label{display: flex; justify-content: space-between;}
+        label input{
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        nav{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0px;
+        }
+
+        nav a{
+            color: inherit;
+            text-decoration: none;
+        }
+    </style>
     
 </head>
 <body>
     <div class="container">
         <header>
-            <nav id="nav-menu">
-                <a href="./homePage.html" >Accueil</a>
-                <a href="./planing.html" class="active-link">Planifier</a>
-                <a href="./statistics.html">Statistiques</a>
-                <a href="./settings.html">Reglages</a>
-            </nav>
-            <div>
-                <h3>Personal Workflow</h3>
-                <span class="subtitle">Organisation de vos activités groupées en catégories</span>
-            </div>
-    
-            <!--   -->
+            <button class="navigation-btn"><a href="./homePage.html"><</a></button>
+            <h4>Planification</h4>
         </header>
+        <main>
+            <form>
+                <h3>Nouvelle planification</h3>
+                <input type="text" placeholder="Tâche | Activité | Action" id="task">
+                <input type="text" placeholder="Categorie | Groupe" id="category">
+                <label for="date"><span>Date</span><input type="date" name="date" id="date"></label>
+                <label for="time"><span>Heure</span><input type="time" name="time" id="time"></label>
+                <label for="routine"><span>Définir comme une routine</span><input type="checkbox" name="routine" id="routine"></label>
+                <button type="submit">Valider</button>
+            </form>
+            <nav>
+                <a href="#agenda">Agenda</a>
+                <a href="#routine">Routine</a>
+            </nav>
+            <section id="agenda"></section>
+            <section id="routine"></section>
+        </main>
     </div>
 </body>
 </html>

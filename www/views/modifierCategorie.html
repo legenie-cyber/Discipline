@@ -3,11 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
     <title>Categorie</title>
+    <style>
+        form{
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            flex-direction: column;
+            background: none;
+        }
+        .taskRow{
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            align-items: center;
+            position: relative;
+        }
+
+        .action{
+            right: 10px;
+            position: absolute;
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete{
+            position: static;
+            width: 50px;
+            border-radius: 18px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        
+        <header>
+            <button class="navigation-btn"><a href="./homePage.html"><</a></button>
+            <h4>Modification</h4>
+        </header>
+        <form id="mainContainer">
+            
+            <br>
+            <div style="display: flex; align-items: center; position: relative;">
+                <input type="text" name="categoryName" id="categoryName">
+                <div class="action">
+                    <icon class="rename-ic">&#9999;</icon>
+                    <icon  class="delete-category">&#10060;</icon>
+                </div>            
+            </div>
+            <br><hr>
+            <div class="wrapper">
+            </div>
+            <!-- Pour une meilleur gestion future
+            <div class="buttons">
+                <button type="submit">Enregistrer</button>
+                <button type="reset">Annuler</button>
+            </div> -->
+        </form>
     </div>
 </body>
+<script src="../models/settings.js"></script>
+
+<script type="module">
+    import { StorageDB } from "../models/data.js";
+    import { FestiveUI } from "../models/festiveUi.js";
+    const db = new StorageDB("flowRecord")
+    const targetCategory = localStorage.getItem("modify-category")
+    const form = document.getElementById("mainContainer")
+    const  input = document.createElement("input")
+    const tasks = await db.find({categoryName: targetCategory})
+    const ui = new FestiveUI({
+        popupPosition: 'bottom-right',
+        colors: [
+            { name: 'accent', value: '#5647ea' },
+            { name: 'particle', value: '#ffd166' },
+            { name: 'particle', value: '#3ba3c9' }
+        ]
+    });
+    // localStorage.removeItem("modify-category")
+
+
+    const initForm = () => {
+        form.querySelector("#categoryName").value = targetCategory
+        tasks.forEach(task => {
+            createRow(task)
+        });
+    }
+
+    const createRow = (rec) =>{
+        const row = document.createElement("div")
+        row.classList.add("taskRow") 
+        row.innerHTML = `
+            <input type="text" class="taskName" name="${rec.taskName}" value="${rec.taskName}" style="flex: 1;">
+            <div class="action">
+                <icon data-action="rename" data-oldname="${rec.taskName}" class="rename-ic ic">&#9999;</icon>
+                <icon data-action="picture" class="picture-ic ic">&#128444;</icon>
+                <icon data-action="delete" class="delete-ic ic">&#10060;</icon>
+            </div>
+        `
+        document.querySelector(".wrapper")
+        .append(row)
+    }
+
+    document.querySelector(".delete-category").addEventListener("click",async ev => {
+        ev.preventDefault()
+        const validate = await ui.confirm(`Voulez-vous vraiment supprimer le groupe: ${targetCategory}?`, {title: "confirmation"})
+        if (validate) {
+            const removed = await db.remove({categoryName: targetCategory})
+            if (removed) {
+                await ui.alert("Groupe supprimé", {title: "Termine"})
+            }
+            location.assign("./homePage.html")
+        }
+    })
+
+    const getInput = (ic) => {
+        return ic.parentElement.parentElement.querySelector("input")
+    }
+
+   initForm()
+
+    document.querySelectorAll(".ic")
+    .forEach(ic => {
+        ic.addEventListener("click",async ev => {
+            ev.preventDefault()
+            const targetInput = getInput(ev.currentTarget)
+
+            if (ic.dataset.action === "delete") {
+                let permission = await ui.confirm(`Voulez-vous vraiment supprimer cette tâche: \n` + targetInput.value, {title: "confirmation"})
+                if (permission) {
+                   const response =  await db.remove({taskName: targetInput.value})
+                   if (response) {
+                       targetInput.parentElement.remove()
+                   } else {
+                    await ui.alert("Cette tâche n'a pas été trouvée!")
+                   }
+                }
+                
+            } else if (ic.dataset.action === "rename"){
+                const oldName = ic.dataset.oldname
+                const newName = targetInput.value.trim()[0].toUpperCase() + targetInput.value.trim()?.slice(1)
+                await db.update({taskName: oldName}, {taskName: newName})
+                console.log("Modifie");
+            }
+        } )
+    })
+
+    form.addEventListener("submit", ev => {
+        ev.preventDefault()
+    })
+</script>
 </html>

@@ -5,16 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title></title>
+    <style>
+        .div-indicators{
+            position: fixed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: auto;
+            width: 90%;
+            top: 10px;
+            left: 10px;
+            background: rgba(252, 251, 251, 0.146);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: .1rem .5rem;
+            font-weight: 700;
+            z-index: 90;
+        }
+
+        .div-indicators button{
+            background: none;
+            font-weight: 900;
+            /* font-size: 1.5rem; */
+        }
+
+        .pagination{
+            display: flex;
+            gap: 10px;
+        }
+
+        .completed{
+            color: rgb(8, 250, 8);
+        }
+
+        .stopped{
+            color: red;
+            display: none;
+        }
+
+        .div-indicators .value{
+            font-weight: 600;
+        }
+
+        .firstButtons{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 90%;
+        }
+
+        .time-control-btn{
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 10px 20px;
+            margin: auto 5px;
+            transition: all 1s ease;
+        }
+        .time-control-btn:nth-child(2){
+            border-radius: 25px;
+            flex: 1;
+        }
+        .stop{
+        color: red;
+        }
+        .termine{
+            color: limegreen;
+        }
+        .play-pause[data-state = "play"]::before{
+            content: "\23F5";
+        }
+        .play-pause[data-state = "pause"]::before{
+            content: "\23F8";
+        }
+    </style>
 </head>
 <body>
     <div id="wrapper">
+        <div class="div-indicators">
+            <button class="navigation-btn"><a href="./homePage.html"><</a></button>
+            <div class="pagination"></div>
+            <div class="completed"><span class="value">0</span>/<span class="effectif"></span></div>
+            <!-- <div class="stopped" ><span class="value">0</span>/<span class="effectif"></span></div> -->
 
+        </div>
     </div>
     
-
     <template id="timer-layout">
-        <div class="titles">
-            <h2 class="categorie-title"></h2> <li></li> <h4 class="task-title"></h4>
+        <div class="titles" >
+            <h3 class="categorie-title"></h3> <li></li><h4 class="task-title"></h4>
         </div>
         <div class="timer">
             <svg class="progress-ring" width="300" height="300">
@@ -24,24 +104,21 @@
                   <circle class="ring-pg" id="timer-ring-2" stroke="white" stroke-width="4" fill="transparent" r="140" cx="150" cy="150"></circle>
             </svg>
             <h2 class="timeLayout">00:00:00</h2>
-        </div>
+        </div>  
         <div class="firstButtons">
-            <button class="play" >Play</button>
-            <button class="pause" >Pause</button>
-            <button class="stop" >Stop</button>
-            <button class="termine" >Termine</button>
+            <button class="time-control-btn stop" >&#x23F9;</button>
+            <button class="time-control-btn play-pause" data-state="play" &#x23F5;></button>
+            <!-- <button class="time-control-btn pause" >&#x23f8;</button> -->
+            <button class="time-control-btn termine" >&#x2713;</button>
         </div>
-
     </template>
 
     <template id="todolist-layout">
-        
         <form action="">
-            <h3>Decrire une liste de tache precise</h3>
+            <h4>Decrire une liste de tache precise</h4>
             <input type="text" placeholder="Entrer un titre" name="title" required >
             <button type="submit">Ajouter</button>
         </form>
-        
         <main>
             <div id="buttons">
                 <button class="all active" >Toutes</button>
@@ -49,9 +126,9 @@
                 <button class="done">Faites</button>
             </div>
             <div class="list-group"></div>
-            
         </main>
     </template>
+
     <template id="todolist-item">
         <label for="check-task">
             <input type="checkbox" class="check-task" name="check-task">
@@ -59,18 +136,12 @@
             <button class="delete">X</button>
         </label>
     </template>
+
     <template id="msg-error">
         <p class="msg-error">erreur serveur</p>
     </template>
 
-    
-    
-    
     <script src="../models/flow.js" type="module"></script>
-    <script type="module">
-        let title = document.querySelector("title")
-        title.innerText = JSON.parse(localStorage.getItem("currentCategorie")).name
-    
-    </script>
+    <script src="../models/settings.js" type="module"></script>
 </body>
 </html>

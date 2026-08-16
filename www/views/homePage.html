@@ -5,6 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal WorkFlow</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .section-heading{
+            display: flex;
+            justify-content: space-between;
+        }
+        .ic-modify-section{
+            transform: rotate(135deg);
+            scale: 1.2;
+            cursor: pointer;
+        }
+        article{
+            display: flex;
+            justify-content: space-between;
+        }
+        .reservedTime{
+            background: transparent;
+            border-radius: 10px;
+            border: none;
+            color: black;
+            padding: 5px 10px;
+            z-index: 999 !important;
+        }
+        .reservedTime:focus{
+            outline: none;
+            border: 2px solid rgba(15, 23, 42, 0.18);
+        }
+        .actions{
+            position: fixed;
+            right: 20px;
+            z-index: 90;
+            bottom: 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+        }
+        .actions > *{
+            backdrop-filter: blur(60px);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -16,26 +57,22 @@
                 <a href="./settings.html">Reglages</a>
             </nav>
             <div>
-                <h3>Personal Workflow</h3>
+                <h3><span class="slug">Hi</span><span>•</span><span class="sub-name">There!</span></h3>
                 <span class="subtitle">Organisation de vos activités groupées en catégories</span>
             </div>
     
             <!--   -->
         </header>
+        <button class="projet">PROJETS</button>
         <div class="actions">
             <button class="plus">+</button>
-            <button class="projet">PROJETS</button>
+            <button class="start">commencer <span class="module-number"></span></button>
         </div>
-        <button class="start">commencer <br> <span class="module-number"></span></button>
-        <main id="mainContainer"> 
-        </main>
-
-        
+        <main id="mainContainer"></main>    
     </div>
     <script src="../models/settings.js"></script>    
     <script type="module">
         import { StorageDB } from '../models/data.js';
-
         const db = new StorageDB('flowRecord', { persist: true, delay: 10 });
         const plusBtn = document.querySelector('.plus');
         const startBtn = document.querySelector(".start")
@@ -43,41 +80,28 @@
         const mainContainer = document.querySelector('#mainContainer');
 
         const attachArticleHandlers = () => {
-            let checkedTasks = []
             mainContainer.querySelectorAll("article").forEach(article => {
                 handleCheckState(article)            
             })
-            console.log(checkedTasks);
         };
-
-        startBtn.addEventListener("click", ev => {
-            ev.preventDefault()
-            let checkedTasks = []
-            mainContainer.querySelectorAll("article").forEach(article => {
-                let element = {}
-                if (article.dataset.checked === "true") {
-                    element.categoryName = article.parentElement.parentElement.id
-                    element.taskName = article.querySelector("span").dataset.taskName
-                    checkedTasks.push(element)
-                }           
-            })
-            console.log(checkedTasks);
-            
-        })
 
         const handleCounterState = (Boolean) => {
             if (Boolean) {
                 if (counterLayout.innerHTML === "") {
                     counterLayout.innerHTML = 1
+                    startBtn.style.border = "2px solid green"
                     return
                 }
                 counterLayout.innerHTML = parseInt(counterLayout.innerHTML) + 1
             } else {
                 if (counterLayout.innerHTML == 1) {
                     counterLayout.innerHTML = ''
+                    startBtn.style.border = "none"
                     return
                 }
                 counterLayout.innerHTML = parseInt(counterLayout.innerHTML) - 1
+            }
+            if (!isNaN(parseInt(counterLayout.innerHTML))) {
             }
             return
         }
@@ -89,18 +113,42 @@
                     article.dataset.checked = true
                     article.style.border = "2px solid green"
                     handleCounterState(true)
+                    article.querySelector(".additionalInfo").style.display = "flex"
+                    article.querySelector(".additionalInfo").style.justifyContent = "center"
                 }else{
                     article.dataset.checked = false
                     article.style.border = "1px solid rgba(255, 255, 255, 0.18)"
                     handleCounterState(false)
+                    article.querySelector(".additionalInfo").style.display = "none"
+
                 }
             })
+
+            article.querySelectorAll(".reservedTime").forEach(el => {
+                el.addEventListener("click", ev => { ev.stopPropagation()})
+            })
         }
+        
+        const handleModification = () => {
+            document.querySelectorAll(".ic-modify-section").forEach(ic => {
+                ic.addEventListener("click", ev => {
+                    ev.preventDefault()
+                    const targetCategory = ev.currentTarget.dataset.target
+                    localStorage.setItem("modify-category", targetCategory)
+                    location.assign("./modifierCategorie.html")
+                })
+            })
+        
+        }
+
         const createSection = (categoryName) =>{
             const section = document.createElement("section")
             section.id = categoryName
             section.innerHTML = `
-                <h3 style="color: rgba(0,0,0, .6); margin:20px 10px ;">${categoryName}</h3>
+                <h3 style="color: inherit; margin:20px 10px ;" class="section-heading">
+                    ${categoryName}
+                    <icon class="ic-modify-section" data-target="${categoryName}">&#9999;</icon>
+                </h3>
                 <div class="wrapper"></div>
             `
             mainContainer.append(section)
@@ -111,8 +159,10 @@
             article.classList.add("card") 
             article.dataset.checked = false
             article.innerHTML = `
-                <span class="taskName" data-name="${rec.taskName}">${rec.taskName}</span>
-                <div class="additionalInfo"></div>
+                <span class="taskName" data-name="${rec.taskName}" style="flex: 1;">${rec.taskName}</span>
+                <div class="additionalInfo" style="display: none;">
+                    <input type="time" name="time" class="reservedTime" value="00:00">
+                </div>
             `
 
             document.getElementById(rec.categoryName)
@@ -135,9 +185,9 @@
                     }
                 });
             }
-            console.log(records);
             
             attachArticleHandlers();
+            handleModification()
         };
 
         const initCategories = async () => {
@@ -203,6 +253,29 @@
         plusBtn.addEventListener('click', () => {
             location.href = './plusAction.html';
         });
+
+        startBtn.addEventListener("click", ev => {
+            ev.preventDefault()
+            if (isNaN(parseInt(counterLayout.innerHTML))) {
+                console.log("NAN");
+                return
+                
+            }
+            let checkedTasks = []
+            mainContainer.querySelectorAll("article").forEach(article => {
+                let element = {}
+                if (article.dataset.checked === "true") {
+                    element.categoryName = article.parentElement.parentElement.id
+                    element.taskName = article.querySelector("span").dataset.name
+                    element.time = article.querySelector(".reservedTime").value
+                    checkedTasks.push(element)
+                }           
+            })
+            localStorage.setItem("taskModule", JSON.stringify(checkedTasks))
+            console.log(checkedTasks);
+            location.assign("./start.html")
+        })
+
 
         initCategories()
         renderCategories();
