@@ -1,13 +1,3 @@
-Je lève la configuration Capgo depuis le dépôt Git déjà créé et je vérifie la commande exacte à utiliser pour l’init, puis je te donne la bonne séquence.
-
-Read [](file:///home/jameshd/Bureau/-/personal%20workflow/www/docs/capgoInit.md)
-
-Ran terminal command:  cd "/home/jameshd/Bureau/-/personal workflow" && git status --short --branch && echo '---' && ls -a | sed -n '1,40p' && echo '---' && npx @capgo/cli@latest --help | sed -n '1,160p'
-
-Read [](file:///home/jameshd/.config/Code/User/workspaceStorage/10f97e3450a92386910fbc724c302ec7/GitHub.copilot-chat/chat-session-resources/769f7fbc-53c4-47a2-8962-262514b5c65b/call_YVbQR01eAkG9sDxFwxWAwEUG__vscode-1789037727479/content.txt#1-1), lines 1 to 220
-
-Ran terminal command:  cd "/home/jameshd/Bureau/-/personal workflow" && npx @capgo/cli@latest init --help | sed -n '1,120p'
-
 ## ✅ Bon plan de setup Capgo
 
 J’ai vérifié que le bon package est bien :
