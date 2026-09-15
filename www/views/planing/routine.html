@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planification</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        *{
+            font-weight: 700;
+        }
+
+        header{
+            position: sticky;
+            top: 0px;
+            
+        }
+        form{
+            background: transparent;
+            overflow: hidden;
+            transition: all 1s ease;
+        }
+        label{display: flex; justify-content: space-between;}
+        label input{
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        nav{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0px;
+        }
+
+        nav a{
+            color: inherit;
+            text-decoration: none;
+        }
+        #routine:checked~[for="margin"]{
+            display: none;
+        }
+        #routine:checked~label[for="margin"]{
+            display: flex !important;
+        }
+        #routine:checked~label[for="date"]{
+            display: none !important;
+        }
+        .plant{
+            display:flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.09);
+            color: inherit;
+            padding: 0.95rem 1rem;
+            margin: 1rem auto;
+            backdrop-filter: blur(20px);
+        }
+        .plant p{
+            opacity: .7;
+        }
+        .active{
+            display: block;
+        }
+        .drop{
+            display: flex;
+            justify-content: space-between;
+        }
+        .drop-ico{
+            width: max-content;
+            border: none;
+            transform: rotate(90deg);
+            transition: transform 0.3s ease;
+        }
+        .drop-ico input{
+            display: none;
+        }
+        label.drop-ico:has(#drop-ico:checked){
+            transform: rotate(180deg);
+        }
+        form:has(#drop-ico:checked){
+            max-height: 80px;
+            overflow: hidden;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="navigation-btn"><a href="../planing.html">&#60;</a></button>
+            <h4>Routines</h4>
+        </header>
+        <nav>
+            <a href="../planing.html">Agenda</a>
+            <a href="./routine.html">Routines</a>
+            <!-- <a href="./planing/objectifs.html">Objectifs</a>
+            <a href="./planing/projets.html">Projets</a> -->
+        </nav>
+        <main>
+            
+            <form id="planing-form">
+                <div class="drop">
+                    <h3>Nouvelle Routine</h3>
+                    <label class="drop-ico" for="drop-ico">&#9660; <input type="checkbox" name="drop-ico" id="drop-ico"></label>
+                </div>
+                <input name="taskName" type="text" placeholder="Tâche | Activité | Action" id="task" required>
+                <!-- <input name="categoryName" type="text" placeholder="Categorie | Groupe" id="category" required> -->
+                <label for="time"><span>Heure</span><input type="time" name="time" id="time"></label>
+                <!-- <label for="routine"><span>Définir comme une routine</span><input type="checkbox" name="routine" id="routine"></label> -->
+                <label for="margin">
+                    <span>Marge: </span>
+                    <select name="margin" id="margin">
+                        <option value="Au reveil">Au reveil</option>
+                        <option value="Le matin">Le matin</option>
+                        <option value="A midi">A midi</option>
+                        <option value="Dans l'aprem">Dans l'aprem</option>
+                        <option value="Le soir">Le soir</option>
+                        <option value="Au couché">Avant de se coucher</option>
+                    </select>
+                </label>
+                <button type="submit">Valider</button>
+            </form>
+            
+            <section id="routines"></section>
+        </main>
+    </div>
+    <script type="module">
+        import { StorageDB } from"../../models/data.js"
+        import { Timer } from"../../models/TimerManager.js"
+        const form = document.getElementById("planing-form")
+        const db = new StorageDB("planing")
+        const routineSection = document.querySelector("#routines")
+
+        form.addEventListener("submit", async ev =>{
+            ev.preventDefault()
+            const formData = new FormData(ev.currentTarget)
+            const taskName = formData.get("taskName")
+            const time = formData.get("time")
+            const isRoutine = true
+            const margin = formData.get("margin") ?? ""
+            await db.insert({taskName: taskName, time: time, isRoutine: isRoutine, margin: margin})
+            render()
+        })
+
+        // Render Element
+        const renderElement = (element)=>{
+            const div = document.createElement("div")
+            div.dataset.id = element._id
+            div.classList.add("plantParent")
+            div.innerHTML = `
+                <div class="plant">
+                    <h3> ${element.taskName}</h3>
+                    <span>
+                        <p>${element.margin? element.margin : Timer.getRelativeDateLabel(element.date)}</p>
+                        <p>${element.time}</p>
+                    </span>
+                </div>
+                <div class="additionalOption" style="display: none;">
+                    <span class="option">Supprimer</span>
+                </div>
+            `
+            return div;
+            // Ajouter le maintient de l'element pour acceder aux proprietes de modifications et de suppressions
+        }
+
+        const render = async () =>{
+            const records = await db.all()
+            if(records.length === 0) return
+            records.forEach(r =>{
+                if (r.isRoutine) {
+                    routineSection.append(renderElement(r))
+                }
+            })
+        }
+        render()
+       
+    </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discipline</title>
+    <script>
+        if (localStorage.getItem("_id")) {
+            location.assign("./views/homePage.html") 
+        }
+    </script>
+    <style>
+        .container{
+            font-weight: 700;
+        }
+
+        form{
+            padding: .7rem;
+        }
+        button[type="submit"]{
+            position: fixed;
+            top: 80%;
+            margin-top: 1rem;
+            background-color: black;
+        }
+        .next{
+            background-color: blue;
+            box-shadow: 0 0px 10px blue;
+        }
+        section{
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+            display: none;
+        }
+        .active{
+            display: flex;
+        }
+        h3{
+            margin: 15px;
+        }
+        label{
+            border: none;
+            text-align: center;
+        }
+        label:first-child{
+            text-align: left;
+        }
+        input::placeholder{
+            font-weight: 800;
+        }
+        input{
+            margin: 10px auto;
+        }
+        input[type="email"]{
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.18);
+            color: inherit;
+            padding: 0.95rem 1rem;
+            outline: none;
+        }
+        #me{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        div.carrousel{
+            /* display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); */
+            gap: 30px;
+            margin: 10px auto;
+            
+        }
+        div.carrousel > *{
+            height: 140px;
+            padding: 0;
+            position: relative;
+            opacity: .6;
+            transition: opacity .5s ease;
+        }
+        .theme:first-child{
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .theme:last-child{
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .active{
+            opacity: 1 !important;
+        }
+
+        div.carrousel article .title{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(164, 162, 162, 0.757);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(0, 0, 0, .2);
+        }
+        .color[data-color="violet"]{
+            background: violet;
+        }
+        .color[data-color="yellow"]{
+            background: yellow;
+        }
+        .color[data-color="pink"]{
+            background: pink;
+        }
+        .color[data-color="green"]{
+            background: green;
+        }
+        .color[data-color="blue"]{
+            background: blue;
+        }
+        .color[data-color="red"]{
+            background: red;
+        }
+        .buttons{
+            display: flex;
+            gap: 2rem;
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/index-DSKxMHro.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CZfMCkT0.css">
+</head>
+<body>
+    <div class="container">
+        <section id="greeting" data-step="0" class="active step">
+            <label>Salut! <br>content de voir que tu utilise l'app Discipline. <br>En quelques étapes, nous allons créer ton compte.</label>
+            <button onclick="showSection('name', 'greeting')" class="next">Suivant</button>
+
+        </section>
+
+        <section id="name" data-step="1" class="step">
+            <Label>commençons par votre prénom</Label>
+            <input type="text" placeholder="Jane" id="name" required>
+            <button onclick="showSection('slug', 'name')" class="next">Suivant</button>
+        </section>
+
+        <section id="slug" data-step="2" class="step">
+            <label>Choisissez un slug</label>
+            <input type="text" placeholder="Slug" id="slug" maxlength="10">
+            <select>
+                <option value="">Aucun</option>
+                <option value="Hi">Hi</option>
+                <option value="Hi There">Hi There</option>
+                <option value="Salut">Salut</option>
+                <option value="On y va">On y va</option>
+                <option value="Slug">Slug</option>
+            </select>
+            <div class="buttons">
+                <button onclick="showSection('name')">Retour</button>
+                <button onclick="showSection('email', 'slug')" class="next">Suivant</button>
+            </div>
+
+        </section>
+
+        <section id="email" data-step="3" class="step">
+            <label>Maintenant entrez une email pour garder vos données</label>
+            <input type="email" required placeholder="Jane@gmail.com">
+            <div class="buttons">
+                <button onclick="showSection('slug')">Retour</button>
+                <button onclick="showSection('theme', 'email')" class="next">Suivant</button>
+            </div>
+        </section>
+
+        <section id="theme" data-step="4" class="step">
+            <label>Quel thème préferez-vous?</label>
+            <div class="theme-switcher carrousel">
+                <button type="button" class="theme" data-theme="day">Jour</button>
+                <button type="button" class="theme" data-theme="night">Nuit</button>
+            </div>
+            <input type="text" name="" id="theme" style="display: none;">
+            <div class="buttons">
+                <button onclick="showSection('email')">Retour</button>
+                <button onclick="showSection('end', 'theme')" class="next">Suivant</button>
+            </div>
+        </section>
+
+        <section id="end">
+            <!-- <p >Félicitatioin! Votre compte a été bien crée. Maintenant vous pouvez commencer a utiliser</p> -->
+        </section>
+    </div>
+</body>
+</html>

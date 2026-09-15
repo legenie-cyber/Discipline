@@ -41,7 +41,7 @@
             height: 140px;
             padding: 0;
             position: relative;
-            opacity: .6;
+            opacity: .5;
             transition: opacity .5s ease;
         }
         
@@ -135,9 +135,9 @@
                     <div class="mode">
                         <h3>Mode</h3>
                          <div class="theme-switcher carrousel">
-                            <button type="button theme" data-theme="day">Jour</button>
-                            <button type="button theme" data-theme="night">Nuit</button>
-                            <button type="button theme" data-theme="nature">Nature</button>
+                            <button type="button" class="theme" data-theme="day">Jour</button>
+                            <button type="button" class="theme" data-theme="night">Nuit</button>
+                            <button type="button" class="theme" data-theme="nature">Nature</button>
                          </div>
                     </div>
                     <div class="color">
@@ -173,12 +173,11 @@
                             <article data-peintUrl="" class="peint"><span class="title">Papier6</span></article>
                         </div>
                     </div>
-                    
                 </section>
                 
                 <section class="row" id="binome">
                     <h3>Binôme</h3>
-                    <input type="text" placeholder="Prénom du Binôme">
+                    <input type="text" id="subName" placeholder="Prénom du Binôme">
                     <label for="info">Consulter les infos</label>
                     <h4>Autorisation de partage</h4>
                     <div >
@@ -187,7 +186,7 @@
                         <li><label for="state"><span>Etat</span> <input type="checkbox" name="state" id="state"></label></li>
                         <li><label for="stat"><span>Statistiques</span> <input type="checkbox" name="stat" id="stat"></label></li>
                     </div>
-                    <button>Changer de binôme</button>
+                    <button id="ChangeBinome">Changer de binôme</button>
                 </section>
 
                 <section class="row" id="history">
@@ -215,8 +214,52 @@
     </script>
     <script type="module">
         import { StorageDB } from "../models/data.js";
-        let metaData = {me: {id : String, subName: String, slug: String, defaultTime: {duration: Number, durationTip: String}}, theme: {mode: String, color: String, univers: String, papierPeint: URL}, binome: {subName: String, authorization:{programmation: Boolean(false), list: Boolean(false), state: Boolean(false), stat: Boolean(false)}}}
+        import { FestiveUI } from "../models/festiveUi.js";
+        const metaDataConstructor = {me: {id : String, subName: String, slug: String, defaultTime: {duration: Number, durationTip: String}}, theme: {mode: String, color: String, univers: String, papierPeint: URL}, binome: {subName: String, authorization:{programmation: Boolean(false), list: Boolean(false), state: Boolean(false), stat: Boolean(false)}}}
         
+        const ui = new FestiveUI({
+            popupPosition: 'bottom-right',
+            colors: [
+                { name: 'accent', value: '#5647ea' },
+                { name: 'particle', value: '#ffd166' },
+                { name: 'particle', value: '#3ba3c9' }
+            ]
+        });
+
+        const toggle = (card) =>{
+            Array.from(card.parentElement.children).forEach(child => { child.classList.remove("active") });
+            card.classList.add("active")
+        }
+
+        const renderSettings = (metaData)=>{
+            if (!metaData) return
+            // Section Me
+            document.querySelector("#id").value = metaData.me.id ?? "" 
+            document.querySelector("#subName").value = metaData.me.subName ?? ""
+            document.querySelector("#slug").value = metaData.me.slug ?? "" 
+            document.getElementById("default-duration-tip").value = metaData.me.defaultTime.duration ?? "" 
+            document.getElementById("default-duration").value = metaData.me.defaultTime.durationTip ?? "" 
+            // Section Theme
+            document.querySelectorAll("div.carrousel > *").forEach(card => {
+                if (
+                    (card.classList.contains("color") && metaData.theme.color === card.dataset.color)||
+                    (card.classList.contains("icon") && metaData.theme.univers === card.dataset.univers)||
+                    (card.classList.contains("peint") && metaData.theme.papierPeint === card.dataset.peintUrl)||
+                    (card.classList.contains("theme") && metaData.theme.mode === card.dataset.theme) 
+                ) {
+                    toggle(card)
+                }
+            })
+
+            // Section authorization
+            document.querySelectorAll("#binome input[type='checkbox']").forEach(input => {
+                if (input.id === "prog" ) input.checked =  metaData.binome.authorization.programmation === true 
+                if (input.id === "list" ) input.checked = metaData.binome.authorization.list  === true
+                if (input.id === "state") input.checked = metaData.binome.authorization.state === true 
+                if (input.id === "stat" ) input.checked = metaData.binome.authorization.stat  === true
+            })
+        }
+
         document.querySelector(".purge-cache")
         .addEventListener("click", async (ev) => {
             if(confirm("Voulez-vous vraiment effacer l'historique de vos actions?")){
@@ -226,9 +269,11 @@
             }
         })
 
+        // Elements dans les cards
         document.querySelectorAll("div.carrousel > *").forEach(card => {
             card.addEventListener("click", ev=>{
                 ev.preventDefault()
+                const metaData = JSON.parse(localStorage.getItem("metaData")) ?? metaDataConstructor
 
                 Array.from(card.parentElement.children).forEach(child => { child.classList.remove("active") });
                 card.classList.add("active")
@@ -237,36 +282,49 @@
                 else if (card.classList.contains("peint")) metaData.theme.papierPeint = card.dataset.peintUrl
                 else if (card.classList.contains("theme")) metaData.theme.mode = card.dataset.theme
                 localStorage.setItem("metaData", JSON.stringify(metaData))
+                console.log(metaData.theme);   
                 
             })
         })
 
-        document.querySelectorAll("#binome input[type='checkbox']").forEach(input => {
+        // Binome
+        document.querySelectorAll("#binome input").forEach(input => {
             input.addEventListener("change", ev => {
                 ev.preventDefault()
+                const metaData = JSON.parse(localStorage.getItem("metaData")) ?? metaDataConstructor
+
                 if (input.id === "prog" ) metaData.binome.authorization.programmation = input.checked 
                 if (input.id === "list" ) metaData.binome.authorization.list = input.checked 
                 if (input.id === "state") metaData.binome.authorization.state = input.checked 
                 if (input.id === "stat" ) metaData.binome.authorization.stat = input.checked 
+                if (input.id === "subName" ) metaData.binome.subName = input.value.trim() 
                 localStorage.setItem("metaData", JSON.stringify(metaData))
-                console.log(metaData.binome.authorization);
-
             })
+        })
+        document.querySelector("#ChangeBinome")
+        .addEventListener("click", ev=>{
+            ev.preventDefault()
+
+            // Handle Binome changing
+
         })
 
         // Gestion des meta donnees
         document.querySelector(".submitBtn")
         .addEventListener("click", ev => {
             ev.preventDefault()
+            const metaData = JSON.parse(localStorage.getItem("metaData")) ?? metaDataConstructor
             metaData.me.id = document.querySelector("#id").value
             metaData.me.subName = document.querySelector("#subName").value
             metaData.me.slug= document.querySelector("#slug").value
             metaData.me.defaultTime.duration = Number(document.getElementById("default-duration-tip").value)
             metaData.me.defaultTime.durationTip = document.getElementById("default-duration").value
             localStorage.setItem("metaData", JSON.stringify(metaData))
+
+            ui.popup('Modification enregistrée', { type: 'success', title: 'Enregistré' });
         })
 
-        
+        renderSettings(JSON.parse(localStorage.getItem("metaData")))
     </script>
 </body>
 </html>

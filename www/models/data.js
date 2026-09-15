@@ -1,39 +1,79 @@
 
 // Classe utilitaire pour simuler une base de données en mémoire
 export class StorageDB {
-    constructor(name = 'StorageDB', options = {}) {
+    static db ;
+
+    constructor(name = 'StorageDB', options = {}, metaData) {
         this.name = name;
         this.delay = options.delay ?? 0; // ms, pour simuler latence
-        this.persist = options.persist ?? true; // sauvegarde dans localStorage
+        this.persist = options.persist ?? true; // sauvegarde dans indexedDB
         this.store = [];
+        this.objectStore = null;
         this._nextId = 1;
+        this._id = localStorage.getItem("_id")
 
-        // Vérifie la disponibilité de localStorage de façon robuste
-        const hasLocalStorage = (typeof window !== 'undefined' && window.localStorage) || (typeof localStorage !== 'undefined' && localStorage);
+        if (!this.persist || !window.indexedDB) console.warn("Votre appareil ne supporte pas une version stable de la base de donnees. \n Ou vous n'avez pas active le stockage permanant de donnees");
+        // Ouvrir la base de donnees de facon asynchrone.
+        this.ready = new Promise((resolve, reject) => {
+            const request = window.indexedDB.open("Discipline", 3);
 
-        if (this.persist && hasLocalStorage) {
-            try {
-                const raw = localStorage.getItem(this.name);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (Array.isArray(parsed)) {
-                        this.store = parsed;
-                        this._nextId = (this.store.reduce((m, r) => Math.max(m, r._id || 0), 0) || 0) + 1;
-                    }
+            request.onerror = (event) => {
+                console.error("Erreur ouverture IndexedDB:", event.target.error);
+                reject(new Error("Une erreur est survenu dans la creation de la base de donnees\n" + event.target.errorCode));
+            };
+
+            request.onupgradeneeded = (event) => {
+                const db = StorageDB.db || event.target.result;
+                if (!db.objectStoreNames.contains(this.name)) {
+                    db.createObjectStore("users", { keyPath: "_id" });
+                    db.createObjectStore("flowRecord", { keyPath: "_id" });
                 }
-            } catch (e) {
-                // ignore
-            }
-        }
+                
+            };
+
+            request.onsuccess = (event) => {
+                this.db = StorageDB.db || event.target.result;
+                console.info("Base de donnees ouverte avec succes");
+
+                try {
+                    const tx = this.db.transaction(this.name, 'readonly');
+                    const store = tx.objectStore(this.name);
+                    const getReq = store.get(this._id);
+                    getReq.onsuccess = () => {
+                        const rec = getReq.result;
+                        console.log(rec);
+                        if (rec && Array.isArray(rec.data)) {
+                            this.store = rec.data;
+                            
+                            this._nextId = (this.store.reduce((m, r) => Math.max(m, r._id || 0), 0) || 0) + 1;
+                        }
+                        resolve(true);
+                    };
+                    getReq.onerror = () => resolve(true);
+                } catch (err) {
+                    // Si la lecture echoue, on resolve quand meme pour permettre l'utilisation hors ligne
+                    console.warn('Lecture initiale impossible', err);
+                    resolve(true);
+                }
+            };
+        });
+            
     }
 
     _delay() {
         return new Promise(res => setTimeout(res, this.delay));
     }
 
-    _persist(doc) {
-        if (this.persist && typeof localStorage !== 'undefined') {
-            localStorage.setItem(this.name, JSON.stringify(this.store));
+    async _persist(doc) {
+        await this.ready.catch(() => {});
+        if (!this.persist || !this.db) return;
+        try {
+            const tx = this.db.transaction(this.name, 'readwrite');
+            const store = tx.objectStore(this.name);
+            const payload = { _id: this._id, data: this.store };
+            store.put(payload);
+        } catch (err) {
+            console.warn('Echec de la persistence IndexedDB', err);
         }
     }
 
@@ -43,7 +83,7 @@ export class StorageDB {
         if (record._id == null) record._id = this._nextId++;
         record.createdAt = new Date().toISOString();
         this.store.push(record);
-        this._persist();
+        await this._persist();
         return JSON.parse(JSON.stringify(record));
     }
 
@@ -53,10 +93,12 @@ export class StorageDB {
         let results = this.store.slice();
         if (filter) {
             if (typeof filter === 'function') results = results.filter(filter);
-            else if (typeof filter === 'object') results = results.filter(d => {
-                return Object.keys(filter).every(k => d[k] === filter[k]);
+            else if (typeof filter === 'object') 
+            results = results.filter(d => {
+                return Object.keys(filter).every(k =>  d[k] == filter[k]);
             });
         }
+        
         return JSON.parse(JSON.stringify(results));
     }
 
@@ -118,12 +160,12 @@ export class StorageDB {
         await this._delay();
         this.store = [];
         this._nextId = 1;
-        this._persist();
+        await this._persist();
         return true;
     }
 
     async all() {
-        return this.find();
+        return await this.find();
     }
 }
 

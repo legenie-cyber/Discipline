@@ -13,16 +13,18 @@
         header{
             position: sticky;
             top: 0px;
+            
         }
         form{
             background: transparent;
+            overflow: hidden;
+            transition: all 1s ease;
         }
         label{display: flex; justify-content: space-between;}
         label input{
             border-radius: 10px;
             padding: 10px;
         }
-
         nav{
             display: flex;
             justify-content: center;
@@ -31,10 +33,58 @@
             position: sticky;
             top: 0px;
         }
-
         nav a{
             color: inherit;
             text-decoration: none;
+        }
+        .plant{
+            display:flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.09);
+            color: inherit;
+            padding: 0.95rem 1rem;
+            margin: 1rem auto;
+            backdrop-filter: blur(20px);
+        }
+        .plant p{
+            opacity: .7;
+        }
+        .additionalOption{
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.09);
+            color: inherit;
+            margin: 0 auto;
+        }
+        .active{
+            display: block;
+        }
+        .drop{
+            display: flex;
+            justify-content: space-between;
+        }
+        .drop-ico{
+            width: max-content;
+            border: none;
+            transform: rotate(90deg);
+            transition: transform 0.3s ease;
+        }
+        .drop-ico input{
+            display: none;
+        }
+        label.drop-ico:has(#drop-ico:checked){
+            transform: rotate(180deg);
+        }
+        form:has(#drop-ico:checked){
+            max-height: 80px;
+            overflow: hidden;
         }
     </style>
     
@@ -42,26 +92,153 @@
 <body>
     <div class="container">
         <header>
-            <button class="navigation-btn"><a href="./homePage.html"><</a></button>
+            <a href="./homePage.html"><button class="navigation-btn">&#60;</button></a>
             <h4>Planification</h4>
         </header>
+        <nav>
+            <a href="./planing.html">Agenda</a>
+            <a href="./planing/routine.html">Routines</a>
+            <!-- <a href="./planing/objectifs.html">Objectifs</a>
+            <a href="./planing/projets.html">Projets</a> -->
+        </nav>
         <main>
-            <form>
-                <h3>Nouvelle planification</h3>
-                <input type="text" placeholder="Tâche | Activité | Action" id="task">
-                <input type="text" placeholder="Categorie | Groupe" id="category">
+            <form id="planing-form">
+                <div class="drop">
+                    <h3>Agenda</h3>
+                    <label class="drop-ico" for="drop-ico">&#9660; <input type="checkbox" name="drop-ico" id="drop-ico"></label>
+                </div>
+                <input id="task" name="taskName" type="text" placeholder="Tâche | Activité | Action" required>
+                <input id="category" name="categoryName" type="text" placeholder="Categorie | Groupe">
+                <input id="details" name="details" type="text" placeholder="Details">
                 <label for="date"><span>Date</span><input type="date" name="date" id="date"></label>
                 <label for="time"><span>Heure</span><input type="time" name="time" id="time"></label>
-                <label for="routine"><span>Définir comme une routine</span><input type="checkbox" name="routine" id="routine"></label>
                 <button type="submit">Valider</button>
             </form>
-            <nav>
-                <a href="#agenda">Agenda</a>
-                <a href="#routine">Routine</a>
-            </nav>
+            
             <section id="agenda"></section>
-            <section id="routine"></section>
         </main>
     </div>
+    <script type="module">
+        import { StorageDB } from"../models/data.js"
+        import { Timer } from"../models/TimerManager.js"
+        const form = document.getElementById("planing-form")
+        const db = new StorageDB("planing")
+        const agendaSection = document.querySelector("#agenda")
+        const routineSection = document.querySelector("#routines")
+        const updateParams = {isUpdate: false, id: null}
+
+        form.addEventListener("submit", async ev =>{
+            ev.preventDefault()
+            const formData = new FormData(ev.currentTarget)
+            const taskName = formData.get("taskName")
+            const  categoryName = formData.get("categoryName") ?? ""
+            const date = formData.get("date") ?? ""
+            const time = formData.get("time") ?? ""
+            const details = formData.get("details") ?? ""
+            const isRoutine = false
+            if(updateParams.isUpdate){
+                await db.update(updateParams.id, {taskName: taskName, categoryName: categoryName, date: date, time: time, details: details, isRoutine: isRoutine})
+                updateParams.isUpdate = false
+                updateParams.id = null
+            } else {
+                await db.insert({taskName: taskName, categoryName: categoryName, date: date, time: time, details: details, isRoutine: isRoutine})
+            }
+            render()
+        })
+
+        // Render Element
+        const renderElement = (element)=>{
+            const div = document.createElement("div")
+            div.dataset.id = element._id
+            div.dataset.taskName = element.taskName
+            div.classList.add("plantParent")
+            div.innerHTML = `
+                <div class="plant">
+                    <h3> ${element.taskName}</h3>
+                    <span>
+                        <p>${Timer.getRelativeDateLabel(element.date)}</p>
+                        <p>${element.time}</p>
+                    </span>
+                </div>
+                <div class="additionalOption">
+                    <span class="option supprimer">Supprimer</span>
+                    <span class="option modifier">Modifier</span>
+                </div>
+            `
+            return div;
+            // Ajouter le maintient de l'element pour acceder aux proprietes de modifications et de suppressions
+        }
+
+        const handlePointer = ()=>{
+            document.querySelectorAll(".plantParent").forEach(element => {
+                let longPressTimer;
+                
+                element.addEventListener("pointerdown", ()=>{
+                    longPressTimer = setTimeout(() => {
+                        document.querySelectorAll(".additionalOption").forEach(el => { 
+                            el.classList.remove("active")
+                        })
+                        console.log("longPress");
+                        
+                        element.querySelector(".additionalOption").classList.add("active")
+                    }, 500) // Durée en ms (500ms = 0.5s)
+                })
+                
+                element.addEventListener("pointerup", ()=> clearTimeout(longPressTimer))
+                
+                element.addEventListener("pointerleave", ()=> clearTimeout(longPressTimer))
+
+                document.addEventListener("click", (ev)=>{
+                    if(!element.contains(ev.target)){
+                        element.querySelector(".additionalOption").classList.remove("active")
+                    }
+                })
+            })
+        }
+
+        const render = async () =>{
+            const records = await db.all()
+            if(records.length === 0) return
+            records.forEach(r =>{
+                if (!r.isRoutine) {
+                    agendaSection.append(renderElement(r)) 
+                }
+            })
+            handlePointer()
+
+            document.querySelectorAll(".supprimer").forEach(btn =>{
+                btn.addEventListener("click", async ev=>{
+                    const parent = ev.currentTarget.closest(".plantParent")
+                    const id = parent.dataset.id
+                    await db.delete(id)
+                    parent.remove()
+                })
+            })
+
+            document.querySelectorAll(".modifier").forEach(btn =>{
+                btn.addEventListener("click", async ev=>{
+                    const parent = ev.currentTarget.closest(".plantParent")
+                    const taskName = parent.dataset.taskName
+                    console.log(taskName);
+                    
+                    const record = await db.findOne({taskName: taskName})
+                    console.log(record);
+                    
+                    scrollTo({top: 0, behavior: "smooth"})
+                    form.querySelector("#task").value = record.taskName
+                    form.querySelector("#category").value = record.categoryName ?? ""
+                    form.querySelector("#date").value = record.date ?? ""
+                    form.querySelector("#time").value = record.time ?? ""
+                    form.querySelector("#details").value = record.details ?? ""
+                    await db.delete({taskName: taskName})
+                    parent.remove()
+                    render()
+                })
+            })
+
+        }
+        render()
+               
+    </script>
 </body>
 </html>

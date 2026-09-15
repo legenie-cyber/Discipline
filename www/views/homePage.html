@@ -46,6 +46,10 @@
             backdrop-filter: blur(60px);
         }
     </style>
+    <script defer> 
+        let autoReload = setTimeout(()=>{location.reload()}, 3000) 
+        clearTimeout(autoReload)
+    </script>
 </head>
 <body>
     <div class="container">
@@ -73,6 +77,7 @@
     <script src="../models/settings.js"></script>    
     <script type="module">
         import { StorageDB } from '../models/data.js';
+        const meta = new StorageDB('users', { persist: true, delay: 10 });
         const db = new StorageDB('flowRecord', { persist: true, delay: 10 });
         const plusBtn = document.querySelector('.plus');
         const startBtn = document.querySelector(".start")
@@ -171,8 +176,15 @@
         }
 
         const renderCategories = async () => {
-            const records = await db.all();
-
+            let records = await db.all();
+            let i = 0
+            while(records.length === 0 || !records){
+                records = await db.all();
+                console.log(i++);
+                console.log(records)
+            }
+            
+            
             if (records?.length) {
                 mainContainer.innerHTML = '';
                 records.forEach((rec, idx) => {
@@ -239,8 +251,6 @@
                 }
             ]
             
-            
-            // const dbIsSet = 
             if((await db.all()).length != 0) return
             else  categories.forEach(async record => {
                 await db.insert(record) 
@@ -276,9 +286,17 @@
             location.assign("./start.html")
         })
 
+        renderCategories()
 
-        initCategories()
-        renderCategories();
+        const flowState = await db.ready
+        if(flowState) initCategories()
         
+        if(await meta.ready){
+            const id = meta._id
+            const  data = (await meta.find({"_id": id}))[0];
+            
+            document.querySelector(".slug").innerText = data.me.slug
+            document.querySelector(".sub-name").innerText = data.me.subName
+        }
     </script>
 </html>

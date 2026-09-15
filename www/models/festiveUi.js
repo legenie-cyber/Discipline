@@ -610,7 +610,7 @@ ${s} .fui-btn:focus-visible, ${s} .fui-popup-close:focus-visible, ${s} .fui-popu
 // });
 // document.getElementById('btn-pop-success').addEventListener('click', () => {
 //   ui.popup('Le fichier a bien été enregistré.', { type: 'success', title: 'Enregistré' });
-// });
+// });ui.confettis()
 // document.getElementById('btn-pop-actions').addEventListener('click', () => {
 //   ui.popup('Une nouvelle version est disponible.', {
 //     title: 'Mise à jour', type: 'warning', duration: 0,

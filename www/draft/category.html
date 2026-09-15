@@ -5,6 +5,470 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catégorie</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ═══════════════════════════════════════════════
+   CPFMBOUO — WPForms Custom Styling
+   ═══════════════════════════════════════════════ */
+
+/* ── Variables locales ── */
+:root {
+  --green-deep:   #1a3a2a;
+  --green-mid:    #2d6a4f;
+  --green-bright: #52b788;
+  --green-light:  #b7e4c7;
+  --cream:        #f8f4ed;
+  --gold:         #c9a84c;
+  --gold-light:   #f0d080;
+  --text-dark:    #1a2416;
+  --text-mid:     #3d5a47;
+  --text-light:   #6b8f71;
+  --shadow:       rgba(26, 58, 42, 0.15);
+  --error:        #c0392b;
+  --radius:       8px;
+}
+
+/* ══════════════════════════════════════════
+   1. CONTENEUR PRINCIPAL DU FORMULAIRE
+══════════════════════════════════════════ */
+.wpforms-container {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-dark);
+}
+
+.wpforms-form {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 2px 14px var(--shadow);
+}
+
+/* ══════════════════════════════════════════
+   2. TITRE ET DESCRIPTION DU FORMULAIRE
+══════════════════════════════════════════ */
+.wpforms-head-container .wpforms-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--green-deep);
+  margin-bottom: 0.4rem;
+  line-height: 1.2;
+}
+
+.wpforms-head-container .wpforms-description {
+  font-size: 0.88rem;
+  color: var(--text-light);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+
+/* ══════════════════════════════════════════
+   3. CHAMPS — LABELS
+══════════════════════════════════════════ */
+.wpforms-field-label {
+  display: block;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: var(--text-mid) !important;
+  margin-bottom: 5px !important;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+/* Label sub (description sous le label) */
+.wpforms-field-label-inline,
+.wpforms-field-description {
+  font-size: 0.75rem !important;
+  color: var(--text-light) !important;
+  font-weight: 400 !important;
+  margin-top: 3px;
+}
+
+/* Astérisque requis */
+.wpforms-required-label {
+  color: var(--gold) !important;
+  font-size: 0.75rem;
+  margin-left: 2px;
+}
+
+/* ══════════════════════════════════════════
+   4. INPUTS, TEXTAREA, SELECT
+══════════════════════════════════════════ */
+.wpforms-field input[type="text"],
+.wpforms-field input[type="email"],
+.wpforms-field input[type="tel"],
+.wpforms-field input[type="number"],
+.wpforms-field input[type="url"],
+.wpforms-field input[type="password"],
+.wpforms-field input[type="date"],
+.wpforms-field input[type="time"],
+.wpforms-field input[type="search"],
+.wpforms-field textarea,
+.wpforms-field select {
+  width: 100% !important;
+  padding: 10px 14px !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: var(--radius) !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.88rem !important;
+  color: var(--text-dark) !important;
+  background: var(--cream) !important;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s !important;
+  outline: none !important;
+  box-shadow: none !important;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Focus */
+.wpforms-field input[type="text"]:focus,
+.wpforms-field input[type="email"]:focus,
+.wpforms-field input[type="tel"]:focus,
+.wpforms-field input[type="number"]:focus,
+.wpforms-field input[type="url"]:focus,
+.wpforms-field input[type="password"]:focus,
+.wpforms-field input[type="date"]:focus,
+.wpforms-field input[type="time"]:focus,
+.wpforms-field input[type="search"]:focus,
+.wpforms-field textarea:focus,
+.wpforms-field select:focus {
+  border-color: var(--green-bright) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15) !important;
+}
+
+/* Placeholder */
+.wpforms-field input::placeholder,
+.wpforms-field textarea::placeholder {
+  color: var(--text-light) !important;
+  opacity: 0.7;
+}
+
+/* Textarea */
+.wpforms-field textarea {
+  resize: vertical !important;
+  min-height: 110px !important;
+  line-height: 1.6 !important;
+}
+
+/* Select — flèche personnalisée */
+.wpforms-field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232d6a4f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  padding-right: 36px !important;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════════════
+   5. CHECKBOX & RADIO
+══════════════════════════════════════════ */
+.wpforms-field-checkbox .wpforms-field-label-inline,
+.wpforms-field-radio .wpforms-field-label-inline {
+  font-size: 0.86rem !important;
+  color: var(--text-mid) !important;
+}
+
+/* Conteneur d'item */
+.wpforms-field-checkbox ul li,
+.wpforms-field-radio ul li {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Input natif masqué + remplacement visuel */
+.wpforms-field-checkbox ul li input[type="checkbox"],
+.wpforms-field-radio ul li input[type="radio"] {
+  width: 16px !important;
+  height: 16px !important;
+  accent-color: var(--green-mid);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* ══════════════════════════════════════════
+   6. UPLOAD DE FICHIER
+══════════════════════════════════════════ */
+.wpforms-field-file-upload input[type="file"] {
+  background: var(--cream) !important;
+  border: 1.5px dashed var(--green-bright) !important;
+  border-radius: var(--radius) !important;
+  padding: 10px 14px !important;
+  font-size: 0.85rem !important;
+  color: var(--text-mid) !important;
+  width: 100% !important;
+  cursor: pointer;
+}
+
+/* Zone de dépôt moderne (si activée) */
+.wpforms-field-file-upload .wpforms-uploader {
+  border: 1.5px dashed var(--green-bright) !important;
+  border-radius: var(--radius) !important;
+  background: var(--cream) !important;
+  color: var(--text-mid) !important;
+  transition: background 0.2s, border-color 0.2s;
+}
+.wpforms-field-file-upload .wpforms-uploader:hover {
+  background: #eef7f2 !important;
+  border-color: var(--green-mid) !important;
+}
+
+/* ══════════════════════════════════════════
+   7. CHAMPS DE NOM (prénom + nom côte à côte)
+══════════════════════════════════════════ */
+.wpforms-field-name .wpforms-field-row {
+  display: flex;
+  gap: 14px;
+}
+.wpforms-field-name .wpforms-field-row .wpforms-field-column {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ══════════════════════════════════════════
+   8. CHAMP ADRESSE
+══════════════════════════════════════════ */
+.wpforms-field-address .wpforms-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.wpforms-field-address .wpforms-field-column {
+  flex: 1 1 45%;
+  min-width: 0;
+}
+
+/* ══════════════════════════════════════════
+   9. SÉPARATEUR DE SECTION (Page break / divider)
+══════════════════════════════════════════ */
+.wpforms-field-divider {
+  border: none !important;
+  border-top: 2px solid rgba(0, 0, 0, 0.07) !important;
+  margin: 1.5rem 0 !important;
+}
+
+.wpforms-pagebreak-left,
+.wpforms-pagebreak-right {
+  font-size: 0.82rem !important;
+  color: var(--green-mid) !important;
+  font-weight: 600 !important;
+}
+
+/* ══════════════════════════════════════════
+   10. BOUTON DE SOUMISSION
+══════════════════════════════════════════ */
+.wpforms-submit-container {
+  margin-top: 1.2rem;
+}
+
+.wpforms-submit,
+button.wpforms-submit {
+  background: var(--gold) !important;
+  color: var(--green-deep) !important;
+  padding: 13px 28px !important;
+  border-radius: var(--radius) !important;
+  border: none !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  cursor: pointer !important;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.4) !important;
+  display: inline-block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.wpforms-submit:hover,
+button.wpforms-submit:hover {
+  background: var(--gold-light) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.5) !important;
+}
+
+.wpforms-submit:active,
+button.wpforms-submit:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.3) !important;
+}
+
+/* Spinner de chargement */
+.wpforms-submit-spinner {
+  border-color: var(--green-deep) transparent var(--green-deep) transparent !important;
+}
+
+/* ══════════════════════════════════════════
+   11. MESSAGES D'ERREUR
+══════════════════════════════════════════ */
+.wpforms-field .wpforms-error {
+  font-size: 0.76rem !important;
+  color: var(--error) !important;
+  margin-top: 4px !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.wpforms-field .wpforms-error::before {
+  content: '⚠';
+  font-size: 0.7rem;
+}
+
+/* Champ en erreur */
+.wpforms-field input.wpforms-error,
+.wpforms-field textarea.wpforms-error,
+.wpforms-field select.wpforms-error {
+  border-color: var(--error) !important;
+  background: #fff5f5 !important;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1) !important;
+}
+
+/* ══════════════════════════════════════════
+   12. MESSAGE DE CONFIRMATION (après envoi)
+══════════════════════════════════════════ */
+.wpforms-confirmation-container,
+.wpforms-confirmation-container-full {
+  background: linear-gradient(135deg, var(--green-deep), var(--green-mid)) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  padding: 2rem !important;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  line-height: 1.65;
+  text-align: center;
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+.wpforms-confirmation-container p,
+.wpforms-confirmation-container-full p {
+  color: rgba(255, 255, 255, 0.88) !important;
+  margin: 0;
+}
+
+.wpforms-confirmation-container strong,
+.wpforms-confirmation-container-full strong {
+  color: var(--gold-light) !important;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ══════════════════════════════════════════
+   13. ESPACEMENTS ENTRE CHAMPS
+══════════════════════════════════════════ */
+.wpforms-field {
+  margin-bottom: 16px !important;
+  padding: 0 !important;
+}
+
+/* ══════════════════════════════════════════
+   14. BARRE DE PROGRESSION (multi-page)
+══════════════════════════════════════════ */
+.wpforms-page-indicator {
+  margin-bottom: 1.5rem !important;
+}
+
+.wpforms-page-indicator-page-title {
+  font-size: 0.8rem !important;
+  color: var(--text-mid) !important;
+  font-weight: 600 !important;
+  margin-bottom: 6px !important;
+}
+
+.wpforms-page-indicator-steps {
+  font-size: 0.75rem !important;
+  color: var(--text-light) !important;
+}
+
+/* Progress bar */
+.wpforms-page-indicator-page-progress-wrap {
+  background: var(--green-light) !important;
+  border-radius: 20px !important;
+  height: 6px !important;
+  overflow: hidden;
+}
+.wpforms-page-indicator-page-progress {
+  background: linear-gradient(90deg, var(--green-mid), var(--green-bright)) !important;
+  border-radius: 20px !important;
+  height: 6px !important;
+  transition: width 0.4s ease !important;
+}
+
+/* ══════════════════════════════════════════
+   15. BOUTONS PRÉCÉDENT / SUIVANT (multi-page)
+══════════════════════════════════════════ */
+.wpforms-page-button.wpforms-page-prev {
+  background: transparent !important;
+  color: var(--green-mid) !important;
+  border: 1.5px solid var(--green-mid) !important;
+  padding: 11px 24px !important;
+  border-radius: var(--radius) !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+.wpforms-page-button.wpforms-page-prev:hover {
+  background: var(--green-light) !important;
+}
+
+.wpforms-page-button.wpforms-page-next {
+  background: var(--green-mid) !important;
+  color: white !important;
+  border: none !important;
+  padding: 13px 28px !important;
+  border-radius: var(--radius) !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.3) !important;
+}
+.wpforms-page-button.wpforms-page-next:hover {
+  background: var(--green-deep) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ══════════════════════════════════════════
+   16. RATING (étoiles)
+══════════════════════════════════════════ */
+.wpforms-field-rating .wpforms-field-rating-item input:checked ~ label,
+.wpforms-field-rating .wpforms-field-rating-item label:hover,
+.wpforms-field-rating .wpforms-field-rating-item label:hover ~ label {
+  color: var(--gold) !important;
+}
+
+/* ══════════════════════════════════════════
+   17. RESPONSIVE MOBILE
+══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .wpforms-form {
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+  }
+
+  .wpforms-field-name .wpforms-field-row,
+  .wpforms-field-address .wpforms-field-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .wpforms-submit,
+  button.wpforms-submit {
+    padding: 13px 16px !important;
+    font-size: 0.88rem !important;
+  }
+}
+    </style>
 </head>
 <body>
     <div class="container">

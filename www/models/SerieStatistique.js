@@ -270,11 +270,11 @@
         --ss-primary: #4f46e5;
         --ss-primary-light: #eef2ff;
         --ss-accent: #0d9488;
-        --ss-text: #1e293b;
+        --ss-text: #0b111a;
         --ss-muted: #64748b;
         --ss-border: #e2e8f0;
         --ss-bg: #ffffff;
-        font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
+        font-family: system-ui, -apple-system, sans-serif, 'Segoe UI', Inter;
         color: var(--ss-text);
         background: var(--ss-bg);
         border: 1px solid var(--ss-border);
@@ -349,14 +349,16 @@
         background: var(--ss-primary-light);
       }
       .ss-graph-card {
-        font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
+        font-family: system-ui, -apple-system, sans-serif,'Segoe UI', Inter;
         background: var(--ss-bg, #ffffff);
         border: 1px solid #e2e8f0;
         border-radius: 14px;
-        padding: 18px;
+        padding: 5px;
         max-width: 780px;
         margin: 20px auto;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 6px 20px rgba(15, 23, 42, 0.04);
+        font-weight: 600 !important;
+
       }
       .ss-graph-title {
         font-size: 0.95rem;
@@ -367,6 +369,8 @@
       .ss-graph-card canvas {
         width: 100%;
         display: block;
+        font-weight: 600 !important;
+
       }
     `;
     document.head.appendChild(style);
@@ -486,10 +490,10 @@
       polygone: 'Polygone des effectifs',
       ogive: 'Courbe cumulative (ogive)',
     };
-    wrapper.innerHTML = `<p class="ss-graph-title">${this.titre}</p>`;
+    wrapper.innerHTML = `<p class="ss-graph-title"> ${this.titre}</p>`;
 
     const canvas = document.createElement('canvas');
-    const width = 700;
+    const width = 550;
     const height = 380;
     const ratio = window.devicePixelRatio || 1;
     
@@ -525,8 +529,8 @@
     const n = this.data.length;
 
     ctx.clearRect(0, 0, width, height);
-    ctx.font = '11px Segoe UI, sans-serif';
-    ctx.strokeStyle = '#e2e8f0';
+    ctx.font = '14px  Verdana, sans-serif';
+    ctx.strokeStyle = '#010a16';
     ctx.fillStyle = '#64748b';
 
     // Axes

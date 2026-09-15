@@ -113,9 +113,69 @@ export function createElement(tagName,{id="", className="", innerHtml="", value=
     return element
 }
 
-export function getRelativeDateLabel(targetDdate) {
-    const now = new Date()
-    const target = new Date(targetDdate)
+export function handleLongPress(targetElementSelector, callback, duration = 500) {
+    const element = document.querySelector(targetElementSelector);
+    let longPressTimer;
+    
+    element.addEventListener("pointerdown", ()=>{
+
+        if (callback) callback()
+        else 
+        longPressTimer = setTimeout(() => {
+            element.parentElement.children.forEach(el => {
+                el.classList.remove("active")
+            })
+            console.log("longPress");
+            element.classList.add("active")
+        }, duration) 
+    })
+    
+    element.addEventListener("pointerup", ()=>{
+        clearTimeout(longPressTimer)
+    })
+    
+    element.addEventListener("pointerleave", ()=>{
+        clearTimeout(longPressTimer)
+    })
+    document.addEventListener("click", (ev)=>{
+        if(!element.contains(ev.target) || element !== ev.target){
+            element.classList.remove("active")
+        }
+    })
+}
+
+export function createAccount(appTittle, containerSelector =".container" ) {
+    const greeting = `Salut! content de voir que tu utilise l'app Discipline. \n En quelques étapes, nous allons créer ton compte.`
+    const container = document.querySelector(containerSelector)
+    container.innerHTML = `
+        <form>
+            <div id="greeting" data-step="0" class="active step">
+                <label>${greeting}</label>
+            </div>
+            <div id="name" data-step="1" class="step">
+                
+                <input type="text" required placeholder="Jane">
+            </div>
+            <div id="slug" data-step="2" class="step">
+                <label>Choisissez un slug</label>
+                <select>
+                    <option value="Hi">Hi</option>
+                    <option value="Hi There">Hi There</option>
+                    <option value="Salut">Salut</option>
+                    <option value="On y va">On y va</option>
+                    <option value="Slug">Slug</option>
+                </select>
+            </div>
+            <div id="email" data-step="1" class="step">
+                <label>Commençons par votre nom</label>
+                <input type="mail" required placeholder="Jane@gmail.com">
+            </div>
+            <div id="end">Félicitatioin! \n Votre compte a été bien crée. \n Maintenant vous pouvez commencer a utiliser
+            <button type="submit">Suivant<button>
+        </form>
+    `
 
 }
+
+
 

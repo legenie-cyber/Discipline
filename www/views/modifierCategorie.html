@@ -39,7 +39,7 @@
 <body>
     <div class="container">
         <header>
-            <button class="navigation-btn"><a href="./homePage.html"><</a></button>
+            <button class="navigation-btn"><a href="./homePage.html">&#60;</a></button>
             <h4>Modification</h4>
         </header>
         <form id="mainContainer">
@@ -68,11 +68,15 @@
 <script type="module">
     import { StorageDB } from "../models/data.js";
     import { FestiveUI } from "../models/festiveUi.js";
+    
     const db = new StorageDB("flowRecord")
     const targetCategory = localStorage.getItem("modify-category")
     const form = document.getElementById("mainContainer")
     const  input = document.createElement("input")
-    const tasks = await db.find({categoryName: targetCategory})
+    let tasks = await db.find({categoryName: targetCategory})
+    while(tasks.length === 0 || !tasks){ 
+        tasks = await db.find({categoryName: targetCategory}) 
+    }
     const ui = new FestiveUI({
         popupPosition: 'bottom-right',
         colors: [

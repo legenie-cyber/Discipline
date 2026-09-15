@@ -163,12 +163,12 @@ class Item extends Flow{
     }
 
     defaultDuration(){
-        if (!localStorage.getItem("defaultDuration")) {
+        if (!localStorage.getItem("users")) {
             return 30000 // 30sec
         }
 
-        let duration = parseInt(JSON.parse(localStorage.getItem("defaultDuration")).duration)
-        let durationTip = JSON.parse(localStorage.getItem("defaultDuration")).durationTip
+        let duration = parseInt(JSON.parse(localStorage.getItem("users"))?.me?.defaultTime?.duration)
+        let durationTip = JSON.parse(localStorage.getItem("users"))?.me?.defaultTime?.durationTip
 
         switch (durationTip) {
             case "secondes":

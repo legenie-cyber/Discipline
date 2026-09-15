@@ -1,11 +1,16 @@
 const themeButtons = document.querySelectorAll('[data-theme]');
+const slugEl = document.querySelector(".slug")
+const subNameEl = document.querySelector(".sub-name")
+const metaDataConstructor = {me: {id : String, subName: String, slug: String, defaultTime: {duration: Number, durationTip: String}}, theme: {mode: String, color: String, univers: String, papierPeint: URL}, binome: {subName: String, authorization:{programmation: Boolean(false), list: Boolean(false), state: Boolean(false), stat: Boolean(false)}}}
+
 const applyTheme = name => {
     document.body.classList.remove('theme-day', 'theme-night', 'theme-nature');
     document.body.classList.add(`theme-${name}`);
     themeButtons.forEach(button => button.classList.toggle('active', button.dataset.theme === name));
 };
 const initTheme = () => {
-    const savedTheme = JSON.parse(localStorage.getItem('metaData')).theme.mode || 'day';
+    const metaData = JSON.parse(localStorage.getItem('metaData')) ?? metaDataConstructor
+    const savedTheme = metaData.theme.mode || 'day';
     applyTheme(savedTheme);
     themeButtons.forEach(button => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
 
@@ -14,7 +19,6 @@ const initTheme = () => {
         document.body.style.backgroundImage = savedPapierPeint
     }
 };
-initTheme();
 
 const loadIcons = async ()=>{
     
@@ -37,3 +41,16 @@ const loadIcons = async ()=>{
     }
 }
 
+const initGreat = ()=>{
+    if (slugEl && subNameEl) {
+        console.log(slugEl + "\n" + subNameEl);
+        const subName = JSON.parse(localStorage.getItem('metaData')).me.subName
+        const slug = JSON.parse(localStorage.getItem('metaData')).me.slug
+        
+        if (subName) subNameEl.textContent = subName
+        if (slug) slugEl.textContent = slug
+    }    
+}
+
+initTheme();
+initGreat()

@@ -4,13 +4,26 @@
   "description": "<strong>Une tâche, </strong> est un action, un travail élémentaire accomplit dans une dans une catégorie d'action. Par exemple Personal workflow ( PW ), est un outil permettant de définir et de gérer son flu de travail personnel. Il consite plus présisement en un outil visuel permettant d'associer son temps à ses tâche et de s'auto évaluer. Il est utile pour l'organisation d'une séance de travail spontannée, pour une planification rappel mémoire, et pour une auto évaluation de notre éfficacité dans divers domaines qui nous caractérisent.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: aucun test specifie\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+    
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
+    "@capacitor/ios": "^8.5.0",
+    "@capacitor/local-notifications": "^8.3.1",
+    "all": "^0.0.0",
     "localforage": "^1.10.0"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
   }
 }

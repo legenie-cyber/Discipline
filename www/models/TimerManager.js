@@ -96,6 +96,71 @@ class Timer {
 
     return hours_ms + minutes_ms + secondes_ms + ms
   }
+
+  static getRelativeDateLabel(targetDate){
+    const now = new Date()
+    const target = new Date(targetDate)
+
+    // Normalisation des dates a minuit pour ne comparer que les jours et non les heures
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate())
+
+    const diffTime = targetDay - today
+    const diffDays = Math.round(diffTime/(1000 * 60 * 60 * 24))
+
+    //1. Aujoud'hui / hier / demain
+    if (diffDays === 0) return "Aujourd'hui"
+    if (diffDays === -1) return "Hier"
+    if (diffDays === 1) return "Demain"
+
+    // 2. Cette semaine 
+    // On recupere les numeros des semaines et l'annee pour comparaison
+    if (Timer.isSameWeek(today, targetDay) && diffDays < 0) {
+      return target.toLocaleDateString("fr-FR", {weekday: "long"})
+    }
+
+    // 3. La semaine derniere
+    if (Timer.isLastWeek(today, targetDay)) {
+      return "semaine dernière"
+    }
+
+    // 4. Le mois passe
+    const currentMonth = now.getMonth()
+    const currentYear = now.getFullYear()
+    const targetMonth = target.getMonth()
+    const targetYear = target.getFullYear()
+    const isLastMonth = 
+    (targetYear === currentYear && targetMonth === currentMonth -1) ||
+    (currentYear === targetYear + 1 && currentMonth === 0 && targetMonth === 11)
+    if(isLastMonth){
+      return "mois passé"
+    }
+
+    // 5.par defaut: format de date classique
+    return target.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+  }
+
+  static getWeekNumber(date) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+    const dayNum = d.getUTCDate() || 7
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum)
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+    return Math.ceil((((d - yearStart)/86400000) + 1) / 7)
+  }
+
+  static isSameWeek(date1, date2){
+    return Timer.getWeekNumber(date1) === Timer.getWeekNumber(date2) && date1.getFullYear() === date2.getFullYear();
+  }
+
+  static isLastWeek(today, target){
+    const lastWeekDate = new Date(today)
+    lastWeekDate.setDate(today.getDate() - 7)
+    return Timer.isSameWeek(lastWeekDate, target) 
+  }
 }
 
 /* ============================================================
