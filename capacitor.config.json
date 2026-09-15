@@ -10,7 +10,21 @@
       "smallIcon": "ic_stat_icon_config_sample",
       "iconColor": "#488AFF",
       "sound": "beep.wav",
-      "presentationOptions": ["badge", "sound", "banner", "list"]
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "banner",
+        "list"
+      ]
+    },
+    "CapacitorUpdater": {
+      "appId": "com.discipline.app",
+      "version": "0.0.0",
+      "autoUpdate": "always",
+      "autoSplashscreen": true
+    },
+    "SplashScreen": {
+      "launchAutoHide": false
     }
   }
 }
