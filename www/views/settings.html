@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .container{
+            padding: 0;
+            font-weight: 700;
+        }
+
+        form{
+            padding: .7rem;
+        }
+        h3{
+            margin: 15px;
+        }
+        input::placeholder{
+            font-weight: 800;
+        }
+        input{
+            margin: 10px auto;
+        }
+        #me{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        div.carrousel{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 10px auto;
+            
+        }
+        div.carrousel > *{
+            height: 140px;
+            padding: 0;
+            position: relative;
+            opacity: .5;
+            transition: opacity .5s ease;
+        }
+        
+        .active{
+            opacity: 1 !important;
+        }
+
+        div.carrousel article .title{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(164, 162, 162, 0.757);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(0, 0, 0, .2);
+        }
+        .color[data-color="violet"]{
+            background: violet;
+        }
+        .color[data-color="yellow"]{
+            background: yellow;
+        }
+        .color[data-color="pink"]{
+            background: pink;
+        }
+        .color[data-color="green"]{
+            background: green;
+        }
+        .color[data-color="blue"]{
+            background: blue;
+        }
+        .color[data-color="red"]{
+            background: red;
+        }
+        
+
+        #binome label{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+        }
+        #binome label input{
+        margin: 0;
+        }
+        .submitBtn{
+            width: 100%;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 10px auto;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav id="nav-menu">
+                <a href="./homePage.html" >Accueil</a>
+                <a href="./planing.html" >Planifier</a>
+                <a href="./statistics.html" >Statistiques</a>
+                <a href="./settings.html" class="active-link">Reglages</a>
+            </nav>
+           
+            <!--   -->
+        </header>
+        <main>
+            <form >
+                <section class="row" id="me">
+                    <h3>Moi</h3>
+                    <label for="id">Id: <input type="text" placeholder="id:237" id="id" readonly></label>
+                    <input type="text" placeholder="Prénom" id="subName">
+                    <input type="text" placeholder="Slug" id="slug">
+                    <article class="purge-cache">Temps de reférence du compteur<br> 
+                        <div class="drop-down">
+                            <input type="number" id="default-duration">
+                            <select name="" id="default-duration-tip">
+                                <option value="secondes">s</option>
+                                <option value="minutes">m</option>
+                                <option value="heures">h</option>
+                            </select>
+                        </div>
+                    </article>
+                    <button class="submitBtn">&#x2713;</button>
+                </section>
+            
+                <section class="row" id="theme">
+                    <h3>Thème</h3>
+                    <div class="mode">
+                        <h3>Mode</h3>
+                         <div class="theme-switcher carrousel">
+                            <button type="button" class="theme" data-theme="day">Jour</button>
+                            <button type="button" class="theme" data-theme="night">Nuit</button>
+                            <button type="button" class="theme" data-theme="nature">Nature</button>
+                         </div>
+                    </div>
+                    <div class="color">
+                        <h3>Pallette de couleur</h3>
+                        <div class="carrousel">
+                            <article class="color" data-color="violet"><span class="title">violet</span></article>
+                            <article class="color" data-color="yellow"><span class="title">Jaune</span></article>
+                            <article class="color" data-color="pink"><span class="title">Rose</span></article>
+                            <article class="color" data-color="green"><span class="title">Vert</span></article>
+                            <article class="color" data-color="blue"><span class="title">Bleu</span></article>
+                            <article class="color" data-color="red"><span class="title">Rouge</span></article>
+                        </div>
+                    </div>
+                    <div class="univers">
+                        <h3>Univers</h3>
+                        <div class="carrousel">
+                            <article data-univers="nounours" class="icon"><span class="title">Nounours</span></article>
+                            <article data-univers="vegetatif" class="icon"><span class="title">Végetatif</span></article>
+                            <article data-univers="alimentaire" class="icon"><span class="title">Alimentaire</span></article>
+                            <article data-univers="animalier" class="icon"><span class="title">Animlier</span></article>
+                            <article data-univers="sport" class="icon"><span class="title">Sportif</span></article>
+                            <article data-univers="tech" class="icon"><span class="title">Tech</span></article>
+                        </div>
+                    </div>
+                    <div class="papierPeint">
+                        <h3>papier peint</h3>
+                        <div class="carrousel">
+                            <article data-peint-url="" class="peint"><span class="title">Papier1</span></article>
+                            <article data-peint-url="" class="peint"><span class="title">Papier2</span></article>
+                            <article data-peint-url="" class="peint"><span class="title">Papier3</span></article>
+                            <article data-peint-url="" class="peint"><span class="title">Papier4</span></article>
+                            <article data-peint-url="" class="peint"><span class="title">Papier5</span></article>
+                            <article data-peint-url="" class="peint"><span class="title">Papier6</span></article>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="row" id="binome">
+                    <h3>Binôme</h3>
+                    <input type="text" id="binomeSubName" placeholder="Prénom du Binôme">
+                    <label for="info">Consulter les infos</label>
+                    <h4>Autorisation de partage</h4>
+                    <div >
+                        <li><label for="prog"><span>Programmations</span> <input type="checkbox" name="prog" id="prog"></label></li>
+                        <li><label for="list"><span>Listes</span> <input type="checkbox" name="list" id="list"></label></li>
+                        <li><label for="state"><span>Etat</span> <input type="checkbox" name="state" id="state"></label></li>
+                        <li><label for="stat"><span>Statistiques</span> <input type="checkbox" name="stat" id="stat"></label></li>
+                    </div>
+                    <button id="ChangeBinome">Changer de binôme</button>
+                </section>
+
+                <section class="row" id="history">
+                    <h3>Historique</h3>
+                    
+                    <div>Consulter l'historique</div>
+                    <div>Supprimer l'historique</div>
+                    <div>Partager l'historique</div>
+                </section>
+                <br>
+            </form>
+        </main>
+    </div>
+    <script src="../models/settings.js" type="module"></script>
+    <script>
+        // const renderIcons = async ()=>{
+        //     const icons = await loadIcons()
+        //     document.querySelectorAll(".icon").forEach(card => {
+        //         const iconLabel = card.dataset.icon
+        //         card.innerHTML += icons?[iconLabel][5]
+        //     })
+                       
+        // }
+        // renderIcons()
+    </script>
+    <script type="module">
+        import { StorageDB } from "../models/data.js";
+        import { FestiveUI } from "../models/festiveUi.js";
+        import { applyTheme, loadMeta, saveMeta } from "../models/meta.js";
+
+        const ui = new FestiveUI({
+            popupPosition: 'bottom-right',
+            colors: [
+                { name: 'accent', value: '#5647ea' },
+                { name: 'particle', value: '#ffd166' },
+                { name: 'particle', value: '#3ba3c9' }
+            ]
+        });
+
+        const toggle = (card) =>{
+            Array.from(card.parentElement.children).forEach(child => { child.classList.remove("active") });
+            card.classList.add("active")
+        }
+
+        // Affiche les métadonnées (la base est la référence, cf. models/meta.js)
+        const renderSettings = (meta)=>{
+            document.querySelector("#id").value = meta._id ?? ""
+            document.querySelector("#subName").value = meta.me.subName
+            document.querySelector("#slug").value = meta.me.slug
+            document.getElementById("default-duration").value = meta.me.defaultTime.duration
+            document.getElementById("default-duration-tip").value = meta.me.defaultTime.durationTip
+
+            document.querySelector("#binomeSubName").value = meta.binome.subName
+            document.querySelectorAll("div.carrousel > *").forEach(card => {
+                const t = meta.theme
+                if (
+                    (card.classList.contains("color") && t.color === card.dataset.color)||
+                    (card.classList.contains("icon") && t.univers === card.dataset.univers)||
+                    (card.classList.contains("peint") && card.dataset.peintUrl && t.papierPeint === card.dataset.peintUrl)||
+                    (card.classList.contains("theme") && t.mode === card.dataset.theme)
+                ) {
+                    toggle(card)
+                }
+            })
+
+            const auth = meta.binome.authorization
+            document.querySelectorAll("#binome input[type='checkbox']").forEach(input => {
+                if (input.id === "prog" ) input.checked = auth.programmation
+                if (input.id === "list" ) input.checked = auth.list
+                if (input.id === "state") input.checked = auth.state
+                if (input.id === "stat" ) input.checked = auth.stat
+            })
+        }
+
+        const persist = async (changes) => {
+            const meta = await saveMeta(changes)
+            applyTheme(meta)
+            return meta
+        }
+
+        document.querySelector(".purge-cache")
+        .addEventListener("click", async (ev) => {
+            if (ev.target.closest(".drop-down")) return // le champ "temps de référence" partage ce conteneur
+            if(confirm("Voulez-vous vraiment effacer l'historique de vos actions?")){
+                const db = new StorageDB("flowRecord")
+                await db.clear()
+                alert("L'historique a été completement effacée")
+            }
+        })
+
+        // Thème : chaque carte enregistre son choix
+        document.querySelectorAll("div.carrousel > *").forEach(card => {
+            card.addEventListener("click", async ev=>{
+                ev.preventDefault()
+                toggle(card)
+                if (card.classList.contains("color")) await persist({ theme: { color: card.dataset.color } })
+                else if (card.classList.contains("icon")) await persist({ theme: { univers: card.dataset.univers } })
+                else if (card.classList.contains("peint")) await persist({ theme: { papierPeint: card.dataset.peintUrl ?? "" } })
+                else if (card.classList.contains("theme")) await persist({ theme: { mode: card.dataset.theme } })
+            })
+        })
+
+        // Binôme
+        document.querySelectorAll("#binome input").forEach(input => {
+            input.addEventListener("change", async () => {
+                const map = { prog: "programmation", list: "list", state: "state", stat: "stat" }
+                if (map[input.id]) await persist({ binome: { authorization: { [map[input.id]]: input.checked } } })
+                else if (input.id === "binomeSubName") await persist({ binome: { subName: input.value.trim() } })
+            })
+        })
+        document.querySelector("#ChangeBinome")
+        .addEventListener("click", ev=>{
+            ev.preventDefault()
+            // Handle Binome changing
+        })
+
+        // Profil
+        document.querySelector(".submitBtn")
+        .addEventListener("click", async ev => {
+            ev.preventDefault()
+            const duration = Number(document.getElementById("default-duration").value)
+            if (!(duration > 0)) {
+                ui.popup("Le temps de référence doit être supérieur à 0", { type: "error" })
+                return
+            }
+            await persist({ me: {
+                subName: document.querySelector("#subName").value.trim(),
+                slug: document.querySelector("#slug").value.trim(),
+                defaultTime: { duration, durationTip: document.getElementById("default-duration-tip").value }
+            }})
+            ui.popup('Modification enregistrée', { type: 'success', title: 'Enregistré' });
+        })
+
+        const meta = await loadMeta()
+        if (meta) renderSettings(meta)
+    </script>
+</body>
+</html>

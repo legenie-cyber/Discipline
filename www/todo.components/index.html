@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo-list</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section class="container" id="ToDoList">
+        <h3 id="categorie-name"></h3>
+    </section>
+    <template id="todolist-layout">
+        <form action="">
+            <input type="text" placeholder="Entrer votre tache" name="title" required >
+            <button type="submit">Ajouter</button>
+        </form>
+        <main>
+            <div id="buttons">
+                <button class="all active" >Toutes</button>
+                <button class="todo">A faire</button>
+                <button class="done">Faites</button>
+            </div>
+            <div class="list-group"></div>
+            
+        </main>
+    </template>
+    <template id="todolist-item">
+        <label for="check-task">
+            <input type="checkbox" class="check-task" name="check-task">
+            <span class="nom-Tache"></span>
+            <button class="delete">X</button>
+        </label>
+    </template>
+    <template id="msg-error">
+        <p class="msg-error">erreur serveur</p>
+    </template>
+
+    <script src="script.js" type="module"></script>
+    <script type="module">
+        import { StorageDB } from "../models/data.js";
+        const title = document.getElementById("categorie-name")
+        const data = JSON.parse(localStorage.getItem("currentCategorie"))
+       title.innerHTML = data.nom.toUpperCase()
+      console.log(data)
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        form{
+            display: grid;
+            grid-template-columns: 80% 20%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            padding: 10px;
+            width: 100vw;
+            border-radius: 0;
+        }
+
+        h3{
+            text-transform: uppercase;
+        }
+        button{
+            padding: 10px;
+            min-width: max-content !important;
+        }
+        .content{
+            min-height: 30px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            border: none;
+            margin: 20px auto;
+        }
+        label.content:nth-child(3){
+            text-align: right !important;
+        }
+        .lab-input{
+            display: none;
+        }
+        input:checked~label h3{
+            color: greenyellow;
+            transition: all 1s ease;
+        }
+        .card{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 5px 20px;
+            margin: 4px auto;
+        }
+        .validatebtn{
+            position: fixed;
+            right: 1rem;
+            bottom: 7rem;
+            padding: .7rem 1.2rem;
+            border-radius: 50%;
+        }
+        span, .validatebtn, form>*{
+            font-weight: 800;
+        }
+        button{
+            font-size: 1.3rem;
+        }
+        .delete{
+            padding:2px;
+            position: static;
+            border-radius: 10px;
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header><h4>Planifier ça journée</h4></header>
+        
+        <div>
+            <input type="radio" name="labInput" id="todoMorning" class="lab-input" checked>
+            <label for="todoMorning" class="content" id="morning">
+                <h3>Le matin</h3>
+            </label>
+        </div>
+        <div>
+            <input type="radio" name="labInput" id="todoDay" class="lab-input">
+            <label for="todoDay" class="content" id="day">
+                <h3>En journée</h3>
+            </label>
+        </div>
+        <div>
+            <input type="radio" name="labInput" id="todoEvening" class="lab-input">
+            <label for="todoEvening" class="content" id="evening">
+                <h3>Le soir</h3>
+            </label>
+        </div>
+                
+        <form>
+            <input type="text" placeholder="Taches" required>
+            <button type="submit">+</button>
+        </form>
+        <button type="submit" class="validatebtn">&#x2713;</button>
+    </div>
+    <script type="module">
+        import { FestiveUI } from "../../models/festiveUi.js"
+        import { StorageDB } from "../../models/data.js"
+        const form = document.querySelector("form")
+        const validateBtn = document.querySelector(".validatebtn")
+        const ui = new FestiveUI({
+        popupPosition: 'bottom-right',
+        colors: [
+            { name: 'accent', value: '#5647ea' },
+            { name: 'particle', value: '#ffd166' },
+            { name: 'particle', value: '#3ba3c9' }
+        ]
+        });
+        const db = new StorageDB('tomorrow');
+
+        form.addEventListener("submit", ev => {
+            ev.preventDefault()
+            const taskName = form.querySelector("input").value.trim()
+            const selectedPad = document.querySelector("input:checked~label")
+            const article = document.createElement("article")
+            article.classList.add("card") 
+            article.innerHTML = `
+                <span class="taskName" data-name="${taskName}" data-period="${selectedPad.id}" style="flex:1;">${taskName}</span>
+                <input type="time" name="time" class="reservedTime" value="00:00">
+                <button class="delete">X</button>
+            `
+            selectedPad.append(article)
+            handleDelete()
+            form.querySelector("input").value = ""
+        })
+        validateBtn.addEventListener("click", async ev => {
+            ev.preventDefault()
+            const spans = document.querySelectorAll(".taskName")
+            if (spans.length === 0) {
+                ui.popup("Ajoutez au moins une chose à faire demain", { title: 'Planing vide', type: 'warning' });
+                return
+            }
+            const records = []
+            spans.forEach(span => {
+                const record ={}
+                record.taskName = span.dataset.name
+                record.period = span.dataset.period
+                record.duration = span.nextElementSibling.value
+                records.push(record)
+            });
+            console.log(records)
+            await db.insert(records);
+            ui.confettis()
+            await ui.alert('La journée de demain est assurée!', { title: 'Terminé' });
+            location.href = "/www/views/homePage.html"
+        })
+
+        const handleDelete = ()=>{
+            Array.from(document.querySelectorAll(".delete")).forEach(button => {
+            button.addEventListener("click", ev => {
+                ev.stopPropagation()
+                console.log(button.parentElement);
+                
+                button.parentElement.remove()
+            })
+             })
+        }
+    </script>
+</body>
+
+</html>

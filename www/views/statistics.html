@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .container{
+            padding: 10px;
+        }
+        main > section{
+            min-width: 0; /* évite qu'un canvas élargisse la grille sur petit écran */
+        }
+        #hero{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        p{
+            opacity: .6;
+        }
+        .ring-wrap{
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+        }
+        .svg-stat-ring{
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+        .svg-stat-ring path{
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+        .ring-track{
+            stroke: currentColor;
+            opacity: .15;
+        }
+        .ring-progress{
+            stroke: var(--accent, #6366f1);
+            transition: stroke-dasharray .8s ease;
+        }
+        .info-content{
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            text-align: center;
+        }
+        .info-content h2{
+            margin: 0;
+        }
+        .info-content p, .info-content small{
+            margin: 0;
+        }
+        .info-content small{
+            display: block;
+            opacity: .6;
+            font-weight: 600;
+            font-size: .78rem;
+        }
+        #empty-msg{
+            text-align: center;
+            padding: 1rem;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="navigation-btn"><a href="./homePage.html">&#60;</a></button>
+            <h4>Statistiques</h4>
+        </header>
+        <main>
+            <section id="hero">
+                <p>Il semble que ce qui compte</p> <p>Occupe</p>
+                <div class="ring-wrap">
+                    <svg class="svg-stat-ring" viewBox="0 0 300 160" role="img" aria-label="Part moyenne de la journée occupée par vos séances">
+                        <path class="ring-track" d="M 10 150 A 140 140 0 0 1 290 150"></path>
+                        <path id="stat-ring" class="ring-progress" pathLength="100" stroke-dasharray="0 100" d="M 10 150 A 140 140 0 0 1 290 150"></path>
+                    </svg>
+                    <div class="info-content">
+                        <h2><span class="percentage">0</span>%</h2>
+                        <p>De votre journée</p>
+                        <small id="stat-detail"></small>
+                    </div>
+                </div>
+            </section>
+            <section id="general-container">
+                <div id="general-graphe"></div>
+            </section>
+        </main>
+    </div>
+    <script src="../models/settings.js" type="module"></script>
+    <script type="module">
+        import { StorageDB } from "../models/data.js";
+        import { SerieStatistique } from "../models/SerieStatistique.js";
+        import { createElement } from "../models/processing.js";
+        import { Timer } from "../models/TimerManager.js";
+
+        const DAY_MS = 24 * 60 * 60 * 1000 // durée de référence d'une "journée"
+
+        const db = new StorageDB("flowRecord")
+        const data = await db.all()
+
+        // ---------- utilitaires ----------
+        // Jour calendaire LOCAL ("2026-09-30") : évite le décalage UTC de slice(0, 10) sur une date ISO
+        const localDay = (iso) => {
+            const d = new Date(iso)
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+        }
+        const dayToDate = (key) => {
+            const [y, m, d] = key.split("-").map(Number)
+            return new Date(y, m - 1, d)
+        }
+        const sessionsOf = (task) => (task.sessions ?? []).filter(s => s && s.date)
+        const fmtDuration = (ms) => {
+            const s = Math.round(ms / 1000)
+            if (s < 60) return `${s} s`
+            const m = Math.round(s / 60)
+            if (m < 60) return `${m} min`
+            const h = Math.floor(m / 60), r = m % 60
+            return r ? `${h} h ${String(r).padStart(2, "0")}` : `${h} h`
+        }
+        const fmtPercent = (p) => p === 0 ? "0" : p < 0.1 ? "<0,1" : p < 10 ? p.toFixed(1).replace(".", ",") : String(Math.round(p))
+
+        // ---------- bloc "% de la journée" ----------
+        // 1. regroupe toutes les sessions par jour
+        // 2. temps consommé ce jour-là (somme de toutes les sessions du jour)
+        // 3. pourcentage de la journée correspondant (plafonné à 100 %)
+        // 4. moyenne de ces pourcentages sur les jours où il y a eu des séances
+        const msPerDay = new Map()
+        data.forEach(task => sessionsOf(task).forEach(s => {
+            const day = localDay(s.date)
+            msPerDay.set(day, (msPerDay.get(day) ?? 0) + (Number(s.timeMs) || 0))
+        }))
+        const percents = [...msPerDay.values()].map(ms => Math.min(ms / DAY_MS, 1) * 100)
+        const averagePercent = percents.length ? percents.reduce((a, b) => a + b, 0) / percents.length : 0
+        const averageMs = msPerDay.size ? [...msPerDay.values()].reduce((a, b) => a + b, 0) / msPerDay.size : 0
+
+        document.querySelector(".percentage").textContent = fmtPercent(averagePercent)
+        document.querySelector("#stat-ring").setAttribute("stroke-dasharray", `${averagePercent} 100`)
+        document.querySelector("#stat-detail").textContent = msPerDay.size
+            ? `moyenne sur ${msPerDay.size} jour${msPerDay.size > 1 ? "s" : ""} · ${fmtDuration(averageMs)} / jour`
+            : "Aucune séance enregistrée"
+
+        // ---------- top des activités ----------
+        const generalData = data
+            .map(task => ({
+                valeur: 1,
+                effectif: sessionsOf(task).reduce((t, s) => t + (Number(s.timeMs) || 0) / 1000, 0), // secondes
+                label: task.label ? task.label : task.taskName
+            }))
+            .filter(d => d.effectif > 0)
+            .sort((a, b) => b.effectif - a.effectif)
+            .slice(0, 4)
+
+        const general = document.querySelector("#general-graphe")
+        if (generalData.length === 0) {
+            general.innerHTML = '<p id="empty-msg">Aucune séance enregistrée pour le moment.</p>'
+        } else {
+            // unité lisible selon l'ordre de grandeur
+            const maxS = generalData[0].effectif
+            const [diviseur, unite] = maxS < 120 ? [1, "s"] : maxS < 7200 ? [60, "min"] : [3600, "h"]
+            generalData.forEach(d => d.effectif = d.effectif / diviseur)
+            new SerieStatistique(generalData, {type: "discrete", titre: "Le top de vos activités", unite})
+                .renderGraphique(general, "batons")
+        }
+
+        // ---------- une courbe par tâche : nombre de séances par jour ----------
+        const main = document.querySelector("main")
+        data.forEach((task, idx) => {
+            const counts = {}
+            sessionsOf(task).forEach(s => { const k = localDay(s.date); counts[k] = (counts[k] ?? 0) + 1 })
+
+            const dataArray = Object.entries(counts).map(([key, nb]) => {
+                const date = dayToDate(key)
+                return {valeur: date.getTime(), effectif: nb, label: Timer.getRelativeDateLabel(date)}
+            })
+            if (dataArray.length === 0) return
+
+            // Deux jours différents ne doivent pas porter le même libellé (ex. "semaine dernière" ×2) : on met la date
+            const occurrences = {}
+            dataArray.forEach(d => occurrences[d.label] = (occurrences[d.label] ?? 0) + 1)
+            dataArray.forEach(d => {
+                if (occurrences[d.label] > 1) d.label = new Date(d.valeur).toLocaleDateString("fr-FR", {day: "numeric", month: "short"})
+            })
+
+            const section = createElement("section", {id: `sect-${idx}`})
+            main.append(section)
+            new SerieStatistique(dataArray, {type: "discrete", titre: task.taskName, entier: true, libelle: "Séances par jour"})
+                .renderGraphique(section, "polygone")
+        })
+    </script>
+</body>
+</html>

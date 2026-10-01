@@ -1,0 +1,30 @@
+{
+  "appId": "com.discipline.app",
+  "appName": "Discipline",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#488AFF",
+      "sound": "beep.wav",
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "banner",
+        "list"
+      ]
+    },
+    "CapacitorUpdater": {
+      "appId": "com.discipline.app",
+      "version": "0.0.0",
+      "autoUpdate": "always",
+      "autoSplashscreen": true
+    },
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
