@@ -41,7 +41,7 @@ Crée un fichier `capacitor.config.ts` à la racine si absent :
 {
   "appId": "com.example.planning",
   "appName": "Planing App",
-  "webDir": "www",
+  "webDir": "www",// si aucun serveur de developpement n'est utilise
   "server": {
     "androidScheme": "https"
   }

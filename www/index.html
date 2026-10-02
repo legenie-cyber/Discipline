@@ -6,11 +6,11 @@
     <title>Discipline</title>
     <link rel="stylesheet" href="./views/style.css">
     <script type="module" src="./main.js"></script>
-    <script>
+    <!-- <script>
         if (localStorage.getItem("_id")) {
             location.assign("./views/homePage.html") 
         }
-    </script>
+    </script> -->
     <style>
         .container{
             font-weight: 700;
@@ -27,7 +27,7 @@
         }
         .next{
             background-color: blue;
-            box-shadow: 0 0px 10px blue;
+            color: whitesmoke;
         }
         section{
             height: 100vh;
@@ -108,7 +108,7 @@
             border-bottom-right-radius: 24px;
             font-weight: 700;
             text-shadow: 0 0 15px rgba(0, 0, 0, .2);
-        }
+        }:
         .color[data-color="violet"]{
             background: violet;
         }
@@ -135,16 +135,16 @@
 </head>
 <body>
     <div class="container">
-        <section id="greeting" data-step="0" class="active step">
-            <label>Salut! <br>content de voir que tu utilise l'app Discipline. <br>En quelques étapes, nous allons créer ton compte.</label>
-            <button onclick="showSection('name', 'greeting')" class="next">Suivant</button>
+        <!-- <section id="greeting" data-step="0" class=" step">
+            <button onclick= "showSection('name', 'greeting')" class="next">Suivant</button>
 
-        </section>
+        </section> -->
 
-        <section id="name" data-step="1" class="step">
+        <section id="name" data-step="1" class="active step">
+            <label>Salut!<br>En quelques étapes, nous allons créer ton compte.</label>
             <Label>commençons par votre prénom</Label>
             <input type="text" placeholder="Jane" id="name" required>
-            <button onclick="showSection('slug', 'name')" class="next">Suivant</button>
+            <button data-nextId="slug" data-currentId="name" class="next">Suivant</button>
         </section>
 
         <section id="slug" data-step="2" class="step">
@@ -159,8 +159,8 @@
                 <option value="Slug">Slug</option>
             </select>
             <div class="buttons">
-                <button onclick="showSection('name')">Retour</button>
-                <button onclick="showSection('email', 'slug')" class="next">Suivant</button>
+                <button data-previd="name" class="prev">Retour</button>
+                <button data-nextId="email" data-currentId="slug" class="next">Suivant</button>
             </div>
 
         </section>
@@ -169,8 +169,8 @@
             <label>Maintenant entrez une email pour garder vos données</label>
             <input type="email" required placeholder="Jane@gmail.com">
             <div class="buttons">
-                <button onclick="showSection('slug')">Retour</button>
-                <button onclick="showSection('theme', 'email')" class="next">Suivant</button>
+                <button  data-previd="slug" class="prev">Retour</button>
+                <button  data-nextId="theme" data-currentId="email" class="next">Suivant</button>
             </div>
         </section>
 
@@ -182,8 +182,8 @@
             </div>
             <input type="text" name="" id="theme" style="display: none;">
             <div class="buttons">
-                <button onclick="showSection('email')">Retour</button>
-                <button onclick="showSection('end', 'theme')" class="next">Suivant</button>
+                <button  data-previd="email" class="prev">Retour</button>
+                <button data-nextId="end" data-currentId="theme" class="next">Suivant</button>
             </div>
         </section>
 
@@ -196,10 +196,13 @@
         import { NotificationsManager } from './models/notifications.js';
         import { FestiveUI } from "./models/festiveUi.js";
         import { createUser } from "./models/meta.js";
+        import { initAlarmes } from "./models/nativeAlarm.js";
 
         const ui = new FestiveUI()
-        const notification = new NotificationsManager({actionType: "TAP_TYPE"})
-        //Gestion de l'UI
+        const notification = new NotificationsManager({actionType: "TAP_TYPE" })
+        const nextBtns = document.querySelectorAll(".next")
+        const prevBtns = document.querySelectorAll(".prev")
+
         const handleSlug = ()=>{
             const slugInput = document.querySelector("input#slug")
             const slugSelect = document.querySelector("select")
@@ -215,7 +218,7 @@
                 
             })
         })
-        window.showSection = async function(nextId, currentId) {
+        const showSection = async function(nextId, currentId) {
             const current = document.querySelector(`#${currentId}`)
             const next = document.querySelector(`#${nextId}`)
             const name = document.querySelector("input#name").value
@@ -258,12 +261,30 @@
             document.querySelector(".active").classList.remove("active")
             next.classList.add("active")
         }
-        handleSlug()
 
+        handleSlug()
+        nextBtns.forEach(btn => {
+            btn.addEventListener("click", async ev  => {
+                const nextId = ev.currentTarget.dataset.nextid
+                const currentId = ev.currentTarget.dataset.currentid
+                await showSection(nextId, currentId)
+            })
+        })
+        prevBtns.forEach(btn => {
+            btn.addEventListener("click", async ev  => {
+                const prevId = ev.currentTarget.dataset.previd
+                await showSection(prevId)
+            })
+        })
+        
+        
         const notificationsInit = async ()=>{
             await ui.alert("Autorisez les notifications pour que nous puissions vous faire des rappel en temps réel", { title: 'Notifications', type: 'info' });
 
+            initAlarmes()
+            alert("Alarme initialisée")
             await notification.init()
+            alert("Notifications initialisées")
             notification.onAction = (ev) => {
                 if (ev.type === 'tap') {
                     window.location.href = './views/homePage.html'

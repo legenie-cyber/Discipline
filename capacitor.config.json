@@ -1,10 +1,8 @@
 {
   "appId": "com.discipline.app",
   "appName": "Discipline",
-  "webDir": "www",
-  "server": {
-    "androidScheme": "https"
-  },
+  "webDir": "dist",
+ 
   "plugins": {
     "LocalNotifications": {
       "smallIcon": "ic_stat_icon_config_sample",

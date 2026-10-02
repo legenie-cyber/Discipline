@@ -294,14 +294,15 @@
         await initCategories()
         await renderCategories()
     </script>
-    <!-- <script type="module">
+    <script type="module">
         import { NotificationsManager } from "../models/notifications.js";
         const notification = new NotificationsManager({actionType: "TAP_TYPE", loop: false});
         (async () => {
+            alert("Notitication now")
             await notification.init();
             notification.sendNow({title: "Local Test", body: "Test des notifications en local"});
         })();
 
         
-    </script> -->
+    </script>
 </html>

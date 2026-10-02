@@ -131,7 +131,8 @@
     </div>
     <script type="module">
         import { StorageDB } from"../../models/data.js"
-        import { AlarmManager } from "../../models/alarm.js";
+        import { NotificationsManager } from "../../models/notifications.js";
+        import {programmerAlarme} from "../../models/nativeAlarm.js"
         import { Timer } from"../../models/TimerManager.js"
         import { handleLongPress } from "../../models/processing.js";
         const form = document.getElementById("planing-form")
@@ -149,12 +150,15 @@
             while (!response) {
                 response = await db.insert({taskName: taskName, time: time, isRoutine: isRoutine, margin: margin})
             }
-            scheduleAlarm(response._id, taskName, time)
+            console.log(response);
+            
+            await scheduleAlarm(response._id, taskName, time)
             render()
         })
 
         // Render Element
         const renderElement = (element)=>{
+            alert(element._id)
             const div = document.createElement("div")
             div.dataset.id = element._id
             div.classList.add("plantParent")
@@ -184,12 +188,21 @@
             })
         }
         
-        function scheduleAlarm(id, taskName, time){
+        async function scheduleAlarm(id, taskName, time){
             const hour = time.split(":")[0]
             const minute = time.split(":")[1]
-            const alarm = new AlarmManager()
-            alarm.init()
-            alarm.scheduleDailyAt({id, title : taskName, hour : hour, minute : minute })
+            const notification = new NotificationsManager({actionType: "TAP_TYPE", loop: false})
+            await notification.init()
+            notification.scheduleDailyAt({id, title: taskName, hour: hour, minute: minute})
+
+           programmerAlarme({
+                id: id,
+                title: taskName,
+                hour: hour,
+                minute: minute,
+                quotidien: true
+            })
+            
         }
     
         render()
