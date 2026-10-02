@@ -166,3 +166,9 @@ buil web
 ``` cd "/home/jameshd/Bureau/-/personal workflow" && npm run build```
 build android
 ```cd "/home/jameshd/Bureau/-/personal workflow/android" && ./gradlew assembleDebug```
+
+
+# capgo update
+npm version patch --no-git-tag-version   # 0.0.1 → 0.0.2
+npm run build
+npx @capgo/cli bundle upload
