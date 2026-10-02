@@ -1,4 +1,8 @@
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 
-// Confirm this bundle started successfully so Capgo can keep it instead of rolling back
-CapacitorUpdater.notifyAppReady();
+try {
+  const { bundle } = await CapacitorUpdater.notifyAppReady();
+  console.log('✅ App prête, bundle actif :', bundle.id, bundle.version, bundle.status);
+} catch (e) {
+  console.error('❌ notifyAppReady a échoué :', e);
+}
