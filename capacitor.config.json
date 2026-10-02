@@ -2,7 +2,6 @@
   "appId": "com.discipline.app",
   "appName": "Discipline",
   "webDir": "dist",
- 
   "plugins": {
     "LocalNotifications": {
       "smallIcon": "ic_stat_icon_config_sample",
@@ -19,7 +18,8 @@
       "appId": "com.discipline.app",
       "version": "0.0.0",
       "autoUpdate": "always",
-      "autoSplashscreen": true
+      "autoSplashscreen": true,
+      "defaultChannel": "production"
     },
     "SplashScreen": {
       "launchAutoHide": false
