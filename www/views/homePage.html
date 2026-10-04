@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal WorkFlow</title>
     <link rel="stylesheet" href="style.css">
+    <script src="../models/settings.js" type="module"></script>  
     <style>
         .section-heading{
             display: flex;
@@ -46,10 +47,6 @@
             backdrop-filter: blur(60px);
         }
     </style>
-    <script defer> 
-        let autoReload = setTimeout(()=>{location.reload()}, 3000) 
-        clearTimeout(autoReload)
-    </script>
 </head>
 <body>
     <div class="container">
@@ -62,10 +59,8 @@
             </nav>
             <div>
                 <h3><span class="slug">Hi</span><span>•</span><span class="sub-name">There!</span></h3>
-                <span class="subtitle">Organisation de vos activités groupées en catégories</span>
-                <span>Ce ci est une version de test. Vous faites partie de l'équipe de développement.
-                    
-                </span>
+                <span class="subtitle"></span>
+                <span></span>
             </div>
     
             <!--   -->
@@ -77,13 +72,14 @@
         </div>
         <main id="mainContainer"></main>    
     </div>
-    <script src="../models/settings.js" type="module"></script>    
+
     <script type="module">
         import { StorageDB } from '../models/data.js';
         import { loadMeta } from '../models/meta.js';
-
+        
         // Compte introuvable (données effacées, _id périmé) : retour à l'inscription
         if (!(await loadMeta())) {
+            alert("Impossble de charger les meta Donnees")
             localStorage.removeItem("_id")
             location.replace("../index.html")
             await new Promise(() => {}) // on n'exécute pas le reste de la page pendant la redirection
@@ -188,6 +184,9 @@
 
         const renderCategories = async () => {
             const records = await db.all();
+            console.log(records);
+            
+            
             if (records.length) {
                 mainContainer.innerHTML = '';
                 records.forEach((rec, idx) => {
@@ -208,47 +207,7 @@
         const initCategories = async () => {
             const categories = [
                 {
-                    taskName : "Pompes",
-                    categoryName :  "Sport",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Squad",
-                    categoryName :  "Sport",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Footing",
-                    categoryName :  "Sport",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Lessive",
-                    categoryName :  "Menage",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Vessel",
-                    categoryName :  "Menage",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
                     taskName : "Nos astres opposés",
-                    categoryName :  "Etude",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Programmation",
-                    categoryName :  "Etude",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Mathématiques",
-                    categoryName :  "Etude",
-                    sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
-                },
-                {
-                    taskName : "Réseau & Sécurité",
                     categoryName :  "Etude",
                     sessions: [] // sessions: [{timeMs, time, status, todolist : []}]
                 }
@@ -294,7 +253,7 @@
         await initCategories()
         await renderCategories()
     </script>
-    <script type="module">
+    <!-- <script type="module">
         import { NotificationsManager } from "../models/notifications.js";
         const notification = new NotificationsManager({actionType: "TAP_TYPE", loop: false});
         (async () => {
@@ -302,7 +261,5 @@
             await notification.init();
             notification.sendNow({title: "Local Test", body: "Test des notifications en local"});
         })();
-
-        
-    </script>
+    </script> -->
 </html>

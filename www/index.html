@@ -6,11 +6,11 @@
     <title>Discipline</title>
     <link rel="stylesheet" href="./views/style.css">
     <script type="module" src="./main.js"></script>
-    <!-- <script>
+    <script>
         if (localStorage.getItem("_id")) {
             location.assign("./views/homePage.html") 
         }
-    </script> -->
+    </script>
     <style>
         .container{
             font-weight: 700;
@@ -141,9 +141,11 @@
         </section> -->
 
         <section id="name" data-step="1" class="active step">
-            <label>Salut!<br>En quelques étapes, nous allons créer ton compte.</label>
-            <Label>commençons par votre prénom</Label>
-            <input type="text" placeholder="JamesHD" id="name" required>
+            <label>Salut! <span style="font-size:500%;color:blue;">★</span>
+                <br>En quelques étapes, nous allons créer ton compte.
+            </label>
+            <Label>Commençons par votre prénom</Label>
+            <input type="text" placeholder="James" id="name" required>
             <button data-nextId="slug" data-currentId="name" class="next">Suivant</button>
         </section>
 
@@ -252,6 +254,7 @@
                     await createUser({ me: { subName: name, slug, email }, theme: { mode: theme } })
                     ui.confettis()
                     await ui.alert("Félicitatioin! Votre compte a été bien crée. Maintenant vous pouvez commencer a utiliser", {title: "Terminé"})
+                    console.warn("Redirection vers la page d'accueil")
                     location.assign("./views/homePage.html")
                 } catch (error) {
                     console.error("Erreur lors de la création du compte", error)
@@ -293,6 +296,12 @@
                 }
             }
             notification.sendNow({title: "Plus qu'un partenaire de route", body:"Bienvenue sur discipline \n Nous vous offrons une interface intuitive et optimisée pour vous aider à mieux gerer votre temps."})
+        }
+
+        async function autoTtest() {
+            const record = await createUser({ me: { subName: "name", slug:"slug", email:"email" }, theme: { mode: "day" } })
+            console.log(record)
+            location.assign("./views/homePage.html")
         }
 
     </script>

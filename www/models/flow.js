@@ -227,7 +227,7 @@ class Item extends Flow{
         })
     }
 
-     controlTtl = async (ms)=>{
+    controlTtl = async (ms)=>{
         if (ms >= this.#ttl) {
             this.timer.pause()
             this.status = "termine"
@@ -255,7 +255,8 @@ class Item extends Flow{
         const taskName = this.element.querySelector(".task-title").innerText
         const categoryName = this.element.querySelector(".categorie-title").innerText
         // categoryName dans le sélecteur : deux catégories peuvent avoir une tâche du même nom
-        await this.db.update({ taskName, categoryName }, (r) => { (r.sessions ??= []).push(session) })
+        const response = await this.db.update({ taskName, categoryName }, (r) => { (r.sessions ??= []).push(session) })
+        console.log("Reponse de l'update" + response)
     }
 
     info(elem){

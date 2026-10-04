@@ -16,8 +16,8 @@
     },
     "CapacitorUpdater": {
       "appId": "com.discipline.app",
-      "version": "0.0.0",
-      "autoUpdate": "always",
+      "version": "0.3.2",
+      "autoUpdate": true,
       "autoSplashscreen": true,
       "defaultChannel": "production"
     },

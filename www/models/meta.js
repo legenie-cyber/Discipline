@@ -81,10 +81,13 @@ export const getCachedMeta = () => {
 export const loadMeta = async () => {
     const id = getUserId();
     if (id === null) return null;
-    const record = await new StorageDB('users').findOne(id);
+    // const record = await new StorageDB('users').findOne(id);
+    const record = JSON.parse(localStorage.getItem(CACHE_KEY));
     if (!record) return null;
     const meta = normalize(record);
-    meta._id = record._id;
+    // meta._id = record._id;
+    meta._id = JSON.parse(localStorage.getItem(ID_KEY));
+    
     writeCache(meta);
     return meta;
 };
