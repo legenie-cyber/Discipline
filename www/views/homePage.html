@@ -12,9 +12,10 @@
             justify-content: space-between;
         }
         .ic-modify-section{
-            transform: rotate(135deg);
-            scale: 1.2;
+            width: 1.4rem;
+            height: 1.4rem;
             cursor: pointer;
+            pointer-events: auto; /* l'icône elle-même reçoit le clic */
         }
         article{
             display: flex;
@@ -159,7 +160,7 @@
             section.innerHTML = `
                 <h3 style="color: inherit; margin:20px 10px ;" class="section-heading">
                     ${categoryName}
-                    <icon class="ic-modify-section" data-target="${categoryName}">&#9999;</icon>
+                    <icon class="ic-modify-section svgi svgi-edit" data-target="${categoryName}" role="button" aria-label="Modifier la catégorie"></icon>
                 </h3>
                 <div class="wrapper"></div>
             `

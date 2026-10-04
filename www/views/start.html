@@ -62,6 +62,9 @@
             padding: 10px 20px;
             margin: auto 5px;
             transition: all 1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .time-control-btn:nth-child(2){
             border-radius: 25px;
@@ -73,18 +76,14 @@
         .termine{
             color: limegreen;
         }
-        .play-pause[data-state = "play"]::before{
-            content: "\23F5";
-        }
-        .play-pause[data-state = "pause"]::before{
-            content: "\23F8";
-        }
+        .play-pause[data-state="play"] .svgi{ --ic: var(--ic-play); }
+        .play-pause[data-state="pause"] .svgi{ --ic: var(--ic-pause); }
     </style>
 </head>
 <body>
     <div id="wrapper">
         <div class="div-indicators">
-            <button class="navigation-btn"><a href="./homePage.html">&#60;</a></button>
+            <button class="navigation-btn" aria-label="Retour"><a href="./homePage.html"><span class="svgi svgi-back" aria-hidden="true"></span></a></button>
             <div class="pagination"></div>
             <div class="completed"><span class="value">0</span>/<span class="effectif"></span></div>
             <!-- <div class="stopped" ><span class="value">0</span>/<span class="effectif"></span></div> -->
@@ -106,10 +105,10 @@
             <h2 class="timeLayout">00:00:00</h2>
         </div>  
         <div class="firstButtons">
-            <button class="time-control-btn stop" >&#x23F9;</button>
-            <button class="time-control-btn play-pause" data-state="play" &#x23F5;></button>
+            <button class="time-control-btn stop" aria-label="Arrêter"><span class="svgi svgi-stop" aria-hidden="true"></span></button>
+            <button class="time-control-btn play-pause" data-state="play" aria-label="Lecture / pause"><span class="svgi" aria-hidden="true"></span></button>
             <!-- <button class="time-control-btn pause" >&#x23f8;</button> -->
-            <button class="time-control-btn termine" >&#x2713;</button>
+            <button class="time-control-btn termine" aria-label="Terminer"><span class="svgi svgi-check" aria-hidden="true"></span></button>
         </div>
     </template>
 

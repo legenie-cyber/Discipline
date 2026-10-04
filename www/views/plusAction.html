@@ -79,15 +79,12 @@
         transform: translateY(0px);
        }
 
-       .submit-btn{
-        background: rgba(11, 205, 163, 0.712)!important;
-       }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <button class="navigation-btn"><a href="./homePage.html">&#60;</a></button>
+            <button class="navigation-btn" aria-label="Retour"><a href="./homePage.html"><span class="svgi svgi-back" aria-hidden="true"></span></a></button>
             <h4>Du nouveau</h4>
         </header>
         <main>
@@ -100,7 +97,7 @@
                         <option value="">Sport</option>
                         <option value="">Etudes</option>
                     </select>
-                    <label for="drop-input" class="select-arrow">&#9660;</label>
+                    <label for="drop-input" class="select-arrow"><span class="svgi svgi-down" aria-hidden="true"></span></label>
                     <input type="checkbox" name="dropy" id="drop-input" >
                     <div class="drop">
                     </div>

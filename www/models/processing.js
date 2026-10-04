@@ -39,7 +39,8 @@ export function createSubCategoryRow(value = '') {
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
     deleteButton.className = 'remove-sub-category';
-    deleteButton.textContent = '✕';
+    deleteButton.setAttribute('aria-label', 'Supprimer la tâche');
+    deleteButton.innerHTML = '<span class="svgi svgi-close" aria-hidden="true"></span>';
 
     row.append(input, deleteButton);
     return row;
