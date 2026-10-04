@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "android": "vite build && cap sync android",
     "test-storage": "node tests/test-storage.js"
   },
   "keywords": [],

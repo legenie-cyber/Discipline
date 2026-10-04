@@ -2,6 +2,9 @@
   "appId": "com.discipline.app",
   "appName": "Discipline",
   "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
   "plugins": {
     "LocalNotifications": {
       "smallIcon": "ic_stat_icon_config_sample",
@@ -16,8 +19,8 @@
     },
     "CapacitorUpdater": {
       "appId": "com.discipline.app",
-      "version": "0.3.2",
-      "autoUpdate": true,
+      "version": "0.3.3",
+      "autoUpdate": "always",
       "autoSplashscreen": true,
       "defaultChannel": "production"
     },
